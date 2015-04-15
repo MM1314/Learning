@@ -1,0 +1,9 @@
+E:\研究项目\进程间通信\IPCTest\IPCClient\bin\Debug\IPCClient.exe
+E:\研究项目\进程间通信\IPCTest\IPCClient\bin\Debug\IPCClient.pdb
+E:\研究项目\进程间通信\IPCTest\IPCClient\bin\Debug\IPCTest.exe
+E:\研究项目\进程间通信\IPCTest\IPCClient\bin\Debug\IPCTest.pdb
+E:\研究项目\进程间通信\IPCTest\IPCClient\obj\x86\Debug\IPCClient.exe
+E:\研究项目\进程间通信\IPCTest\IPCClient\obj\x86\Debug\IPCClient.pdb
+E:\研究项目\进程间通信\IPCTest\bin\IPCClient.exe
+E:\研究项目\进程间通信\IPCTest\bin\IPCClient.pdb
+E:\研究项目\进程间通信\IPCTest\IPCClient\obj\x86\Debug\IPCClient.csprojResolveAssemblyReference.cache

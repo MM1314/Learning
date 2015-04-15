@@ -1,0 +1,4 @@
+E:\研究项目\进程间通信\IPCTest\IPCTest\bin\Debug\IPCInterface.exe
+E:\研究项目\进程间通信\IPCTest\IPCTest\bin\Debug\IPCInterface.pdb
+E:\研究项目\进程间通信\IPCTest\IPCTest\obj\x86\Debug\IPCInterface.exe
+E:\研究项目\进程间通信\IPCTest\IPCTest\obj\x86\Debug\IPCInterface.pdb
