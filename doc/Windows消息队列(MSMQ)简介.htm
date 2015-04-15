@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Windows消息队列(MSMQ)简介</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="profile" href="http://gmpg.org/xfn/11">
+<link rel="pingback" href="http://www.wpdiary.me/xmlrpc.php">
+
+<meta name="generator" content="WordPress 4.0.1">
+<meta name="template" content="Plain WP 0.1.7">
+<link rel="alternate" type="application/rss+xml" title="Wang Peng {blog} » Feed" href="http://www.wpdiary.me/feed">
+<link rel="alternate" type="application/rss+xml" title="Wang Peng {blog} » 评论Feed" href="http://www.wpdiary.me/comments/feed">
+<link rel="alternate" type="application/rss+xml" title="Wang Peng {blog} » Windows消息队列(MSMQ)简介评论Feed" href="http://www.wpdiary.me/1000.html/feed">
+<link rel="stylesheet" id="prettify-gc-syntax-highlighter-css" href="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/prettify.css" type="text/css" media="all">
+<link rel="stylesheet" id="style-css" href="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/style.css" type="text/css" media="all">
+<link rel="stylesheet" id="wp-pagenavi-css" href="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/pagenavi-css.css" type="text/css" media="all">
+<link rel="stylesheet" id="montserrat-css" href="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/css.css" type="text/css" media="all">
+<script type="text/javascript" src="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/jquery.js"></script>
+<script type="text/javascript" src="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/jquery-migrate.js"></script>
+<script type="text/javascript" src="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/navigation.js"></script>
+<link rel="EditURI" type="application/rsd+xml" title="RSD" href="http://www.wpdiary.me/xmlrpc.php?rsd">
+<link rel="wlwmanifest" type="application/wlwmanifest+xml" href="http://www.wpdiary.me/wp-includes/wlwmanifest.xml"> 
+<link rel="prev" title="WordPress图片主题Picture Factory" href="http://www.wpdiary.me/996.html">
+<link rel="next" title="消息队列实际应用FAQ" href="http://www.wpdiary.me/1008.html">
+<link rel="canonical" href="http://www.wpdiary.me/1000.html">
+<link rel="shortlink" href="http://www.wpdiary.me/?p=1000">
+<!--[if lt IE 9]>
+<script src="http://www.wpdiary.me/wp-content/themes/plain-wp/js/html5.js" type="text/javascript"></script>
+<link rel='stylesheet' href='http://www.wpdiary.me/wp-content/themes/plain-wp/desktop.css' type='text/css' media='all' />
+<![endif]-->
+	<style type="text/css">.recentcomments a{display:inline !important;padding:0 !important;margin:0 !important;}</style>
+
+<script src="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/b5m.js" charset="utf-8" id="b5mmain" type="text/javascript"></script></head>
+
+<body class="wordpress ltr zh_CN parent-theme y2015 m04 d15 h23 wednesday logged-out custom-background custom-header singular singular-post singular-post-1000 post-format-standard layout-2c-l">
+
+	<div id="container">		
+        <header id="header">
+            <div class="wrap">
+                <h1 id="site-title"><a href="http://www.wpdiary.me/" title="Wang Peng {blog}">Wang Peng {blog}</a></h1>					
+                
+                <nav id="menu-primary" class="menu"><h3 class="menu-toggle" title="Navigation"><span></span></h3><div class="wrap"><ul id="menu-primary-items" class="menu-items"><li id="menu-item-1571" class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1571"><a href="http://www.wpdiary.me/">首页</a></li>
+<li id="menu-item-1566" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1566"><a href="http://www.wpdiary.me/web-development">网站开发</a></li>
+<li id="menu-item-1696" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1696"><a href="http://www.wpdiary.me/python-2">Python</a></li>
+<li id="menu-item-1569" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1569"><a href="http://www.wpdiary.me/programing">编程</a></li>
+<li id="menu-item-1567" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1567"><a href="http://www.wpdiary.me/wordpress">WordPress</a></li>
+<li id="menu-item-1570" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1570"><a href="http://www.wpdiary.me/seo-2">SEO</a></li>
+<li id="menu-item-1568" class="menu-item menu-item-type-taxonomy menu-item-object-category menu-item-1568"><a href="http://www.wpdiary.me/english">英语充电</a></li>
+</ul></div></nav>
+                            </div>
+        </header><!-- #header -->
+        
+        <div id="main">
+			<div class="wrap">
+            	<nav class="breadcrumb-trail breadcrumbs" itemprop="breadcrumb"><span class="trail-begin"><a href="http://www.wpdiary.me/" title="Wang Peng {blog}" rel="home" class="trail-begin">Home</a></span> <span class="sep">/</span> <span class="trail-end">Windows消息队列(MSMQ)简介</span></nav>
+	<div id="content" class="hfeed">
+
+		
+		
+	
+		
+		<article id="post-1000" class="hentry post publish post-1 odd author-master has-excerpt format-standard category-everything post_tag-msmq post_tag-59">
+
+	
+		<header class="entry-header">
+			<h1 class="entry-title">Windows消息队列(MSMQ)简介</h1>
+			<div class="entry-byline">Published by <span class="author vcard"><a class="url fn n" rel="author" href="http://www.wpdiary.me/author/master" title="小王">小王</a></span> on <abbr class="published" title="星期四, 十一月 24th, 2011, 10:48 下午">2011年11月24日</abbr>  | <a class="comments-link" href="http://www.wpdiary.me/1000.html#respond" title="Comment on Windows消息队列(MSMQ)简介">Leave a response</a> </div>		</header><!-- .entry-header -->
+
+		<div class="entry-content">
+			<h2>1.MSMQ简介</h2>
+<p><strong>1.1消息：</strong></p>
+<p>在两台计算机间传送数据的单位。消息可以是文本字符串，也可以是复杂的对象。</p>
+<p><strong>1.2消息队列：</strong></p>
+<p>在消息的传输过程中保存消息的容器（先进先出）。<a title="MSMQ" href="http://www.wpdiary.me/tag/msmq">MSMQ</a>是Microsoft的消息处理技术，它在任何安装了Microsoft Windows的计算机中，都可以使用。</p>
+<p><strong>1.3消息队列类型</strong></p>
+<p>1）用户队列（可以修改的队列）</p>
+<p>-公共队列（MachineName\QueueName）</p>
+<p>在整个消息队列网络中复制，能被别的机器所访问，如果你的多个项目中用到消息队列，那么你可以把队列定义为公共队列。</p>
+<p>-专用队列（MachineName\Private$\QueueName）</p>
+<p>不在整个消息队列网络中复制，只针对于本机的程序才可以调用的队列，有些情况下为了安全起见定义为私有队列。</p>
+<p>-管理队列</p>
+<p>包含确认在给定消息队列网络中发送的消息回执的消息。</p>
+<p>-响应队列</p>
+<p>包含目标应用程序接收到消息时返回给发送程序的响应消息。</p>
+<p>2）系统队列</p>
+<p>-日志队列（MachineName\QueueName\Journal$ 系统会记录所有消息的副本）</p>
+<p>-死信队列（发布出去的队列）</p>
+<p>-报告队列</p>
+<p>-专用系统队列</p>
+<h2>2.MSMQ的优点</h2>
+<p><strong>2.1高效稳定</strong></p>
+<p>高效：MSMQ是异步通信，无论是发送方还是接收方都不用等待对方返回成功消息，因而大大地提高了事物处理的能力。</p>
+<p>稳定：消息存储在队列中并一直留在那里，直到被适当的处理；可恢复模式在传送过程的每一步骤中，都把消息写入物理磁盘中，以得到较好的故障恢复能力。</p>
+<p>2.2<strong>消息优先级</strong></p>
+<p>更紧急或更重要的消息可在相对不重要的消息之前接收，因此可以为关键的应用程序保证足够的响应时间。</p>
+<p><strong>2.3脱机能力</strong></p>
+<p>MSMQ与WebServices和.NetRomting一样是一种分布式的开发技术。但是MSMQ则可以在Server端离线的情况下工作。
+（将消息临时保存在Client端的消息队列中，以后联机再发送到Server端处理；而WebService和Remoting就必须建立在
+Server端联机并且正常工作的前提之下）</p>
+<p><strong>2.4安全</strong></p>
+<p>MSMQ使用Windows安全来保护访问控制，并对消息的发送和接收进行了加密和验证。</p>
+<p>3.<span style="font-size: 20px; font-weight: bold;">编程结构</span></p>
+<p><strong>3.1 MessageQueue</strong><strong>命名空间</strong>：</p>
+<p>System.Messaging</p>
+<p><strong>3.2 MessageQueue</strong><strong>基类中的主要编程元素</strong>：</p>
+<p>-Create()：创建使用指定路径的新消息队列</p>
+<p>-Delete()：删除现有队列</p>
+<p>-Exists()：查看特定的消息队列是否存在</p>
+<p>-GetPublicQueues()：在消息队列网络中定位特定消息队列</p>
+<p>-Peek()/BeginPeek()：查看某个特定队列中的消息，但不从该队列种移除消息。</p>
+<p>-Receive()/BeginReceive():检索指定队列最前面的消息并将其从该消息队列中移除</p>
+<p>-Send()：将消息发送到指定队列</p>
+<h2>4. 简单消息的发送和接收</h2>
+<p>MSMQ消息队列中定义的消息由一个主体（body）和若干属性构成。消息的主体可以由文本、二进制构成，根据需要还可以被加密。在MSMQ中消息的大小不能够超过４ＭＢ。</p>
+<p><strong>简单消息的发送，步骤大致为</strong></p>
+<p>– 建立与要发送消息的队列的连接</p>
+<p>– 指定你要发送的消息的格式</p>
+<p>– 提供要发送的数据</p>
+<p>– 使用Send方法将消息发送出去</p>
+<h2>5. 复杂消息的发送和接收</h2>
+<p><strong>复杂消息的发送，步骤大致为：</strong></p>
+<p>– 创建一个MessageQueue的实例，然后对它的path属性设置，以明操作的消息队列。</p>
+<p>– 创建一个消息对象实例。</p>
+<p>– 设置消息的主体（body）, 然后修改不希望使用缺省值的属性。</p>
+<p>– 同样使用send方法把消息对象发送至相应的队列中。</p>
+<p>&nbsp;</p>					</div><!-- .entry-content -->
+
+		<footer class="entry-footer">
+			<div class="entry-meta"><span class="category"><span class="before">Posted in </span><a href="http://www.wpdiary.me/everything" rel="tag">神马都有</a></span> <span class="post_tag"><span class="before">| Tagged </span><a href="http://www.wpdiary.me/tag/msmq" rel="tag">msmq</a>, <a href="http://www.wpdiary.me/tag/%e6%b6%88%e6%81%af%e9%98%9f%e5%88%97" rel="tag">消息队列</a></span></div>		</footer><!-- .entry-footer -->
+
+	
+</article><!-- .hentry -->
+		
+			
+<section id="comments">
+
+	
+
+									<div id="respond" class="comment-respond">
+				<h3 id="reply-title" class="comment-reply-title">Leave a Reply <small><a rel="nofollow" id="cancel-comment-reply-link" href="http://www.wpdiary.me/1000.html#respond" style="display:none;">Click here to cancel reply.</a></small></h3>
+									<form action="http://www.wpdiary.me/wp-comments-post.php" method="post" id="commentform" class="comment-form">
+																										<p class="form-author req"><label for="author">Name <span class="required">*</span> </label> <input class="text-input" name="author" id="author" size="40" type="text"></p>
+<p class="form-email req"><label for="email">Email <span class="required">*</span> </label> <input class="text-input" name="email" id="email" size="40" type="text"></p>
+<p class="form-url"><label for="url">Website</label><input class="text-input" name="url" id="url" size="40" type="text"></p>
+												<p class="form-textarea req"><label for="comment">Comment</label><textarea name="comment" id="comment" cols="60" rows="10"></textarea></p>												<p class="form-submit">
+							<input name="" id="submit" value="Post Comment" type="submit">
+							<input name="comment_post_ID" value="1000" id="comment_post_ID" type="hidden">
+<input name="comment_parent" id="comment_parent" value="0" type="hidden">
+						</p>
+						<p style="display: none;"><input id="akismet_comment_nonce" name="akismet_comment_nonce" value="48ac6e3586" type="hidden"></p><p style="display: none;"></p>					<input id="ak_js" name="ak_js" value="1429111117420" type="hidden"></form>
+							</div><!-- #respond -->
+			
+</section><!-- #comments -->
+		
+	
+
+			
+		<div class="loop-nav">
+			<a href="http://www.wpdiary.me/996.html" rel="prev"><span class="previous"><span class="meta-nav">←</span> Previous</span></a>			<a href="http://www.wpdiary.me/1008.html" rel="next"><span class="next">Next <span class="meta-nav">→</span></span></a>		</div><!-- .loop-nav -->
+
+	
+	</div><!-- #content -->
+
+				
+	<aside id="sidebar-primary" class="sidebar">
+
+		<section id="text-4" class="widget widget_text widget-widget_text">			<div class="textwidget"><iframe class="share_self" scrolling="no" src="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/index.htm" frameborder="0" height="550" width="100%"></iframe></div>
+		</section>		<section id="recent-posts-6" class="widget widget_recent_entries widget-widget_recent_entries">		<h3 class="widget-title">近期文章</h3>		<ul>
+					<li>
+				<a href="http://www.wpdiary.me/1878.html">最有效的学习方式－－学习金字塔</a>
+							<span class="post-date">2014年4月10日</span>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1857.html">jQuery性能优化</a>
+							<span class="post-date">2014年3月21日</span>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1825.html">使用T-SQL将DateTime转为.NET中的Ticks</a>
+							<span class="post-date">2013年11月28日</span>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1819.html">IE10中Asp.Net网站无法存储Cookie导致用户登录失败的解决方案</a>
+							<span class="post-date">2013年10月15日</span>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1812.html">如何在下半生走上正路</a>
+							<span class="post-date">2013年9月22日</span>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1805.html">工作计划该如何写？</a>
+							<span class="post-date">2013年9月18日</span>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1799.html">工作中的邮件（十一）提高工作效率</a>
+							<span class="post-date">2013年9月17日</span>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1797.html">工作中的邮件（十）如何与客户沟通</a>
+							<span class="post-date">2013年9月17日</span>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1795.html">工作中的邮件（九）回复粗鲁邮件</a>
+							<span class="post-date">2013年9月17日</span>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1791.html">工作中的邮件（八）邮件中的忌讳</a>
+							<span class="post-date">2013年9月17日</span>
+						</li>
+				</ul>
+		</section><section id="archives-5" class="widget widget_archive widget-widget_archive"><h3 class="widget-title">文章归档</h3>		<ul>
+	<li><a href="http://www.wpdiary.me/date/2014/04">2014年四月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2014/03">2014年三月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2013/11">2013年十一月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2013/10">2013年十月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2013/09">2013年九月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2013/06">2013年六月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2012/06">2012年六月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2012/05">2012年五月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2012/04">2012年四月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2012/03">2012年三月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2012/02">2012年二月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2012/01">2012年一月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2011/12">2011年十二月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2011/11">2011年十一月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2011/10">2011年十月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2011/09">2011年九月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2011/08">2011年八月</a></li>
+	<li><a href="http://www.wpdiary.me/date/2011/07">2011年七月</a></li>
+		</ul>
+</section><section id="linkcat-2" class="widget widget_links widget-widget_links"><h3 class="widget-title">一些网站</h3>
+	<ul class="xoxo blogroll">
+<li><a href="http://highscalability.com/" target="_blank">Highscalability</a></li>
+<li><a href="http://learn.jquery.com/" target="_blank">jQuery Learning Center</a></li>
+<li><a href="http://wiki.mbalib.com/wiki/%E9%A6%96%E9%A1%B5" target="_blank">MBA智库百科</a></li>
+<li><a href="https://medium.com/" target="_blank">Medium</a></li>
+<li><a href="http://www.hanselman.com/blog/" target="_blank">Scott Hanselman</a></li>
+<li><a href="http://segmentfault.com/" target="_blank">SegmentFault</a></li>
+<li><a href="http://stackoverflow.com/" target="_blank">Stack Overflow</a></li>
+<li><a href="http://webdevchecklist.com/aspnet" target="_blank">Web Developer Checklist</a></li>
+<li><a href="http://www.webcodeexpert.com/" target="_blank">webcodeexpert</a></li>
+<li><a href="http://www.totoroclub.net/" title="宫崎骏映画馆是目前国内最大的宫崎骏&amp;吉卜力动画的主题网站" target="_blank">宫崎骏映画馆</a></li>
+<li><a href="http://coolshell.cn/" target="_blank">酷壳</a></li>
+
+	</ul>
+</section>
+<section id="text-2" class="widget widget_text widget-widget_text"><h3 class="widget-title">免费午餐</h3>			<div class="textwidget"><p></p>
+<a href="http://www.mianfeiwucan.org/" target="_blank" title="使孩子们免于饥饿，使我们共同的心愿"><img src="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/logo.jpg" alt="免费午餐" border="0"></a>
+</div>
+		</section><section id="text-3" class="widget widget_text widget-widget_text"><h3 class="widget-title">这个好玩，一年不用买袜子</h3>			<div class="textwidget"><a href="http://t.cn/zY2MMAz" target="_blank" title="男人袜 - 我一直在穿的袜子，不错！"><img src="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/p1.jpg" alt="男人袜"></a></div>
+		</section><section id="text-5" class="widget widget_text widget-widget_text"><h3 class="widget-title">CallMe</h3>			<div class="textwidget"></div>
+		</section>
+	</aside><!-- #sidebar-primary .aside -->
+
+			</div><!-- .wrap -->
+		</div><!-- #main -->
+
+		
+	<aside id="sidebar-subsidiary" class="sidebar">
+		<div class="wrap">
+					<section id="recent-posts-5" class="widget widget_recent_entries widget-widget_recent_entries">		<h3 class="widget-title">近期文章</h3>		<ul>
+					<li>
+				<a href="http://www.wpdiary.me/1878.html">最有效的学习方式－－学习金字塔</a>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1857.html">jQuery性能优化</a>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1825.html">使用T-SQL将DateTime转为.NET中的Ticks</a>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1819.html">IE10中Asp.Net网站无法存储Cookie导致用户登录失败的解决方案</a>
+						</li>
+					<li>
+				<a href="http://www.wpdiary.me/1812.html">如何在下半生走上正路</a>
+						</li>
+				</ul>
+		</section><section id="recent-comments-3" class="widget widget_recent_comments widget-widget_recent_comments"><h3 class="widget-title">近期评论</h3><ul id="recentcomments"><li class="recentcomments"><span class="comment-author-link"><a href="http://www.wpdiary.me/" rel="external nofollow" class="url">tastypaper</a></span>发表在《<a href="http://www.wpdiary.me/1819.html/comment-page-1#comment-1066">IE10中Asp.Net网站无法存储Cookie导致用户登录失败的解决方案</a>》</li><li class="recentcomments"><span class="comment-author-link"><a href="http://www.wpdiary.me/" rel="external nofollow" class="url">tastypaper</a></span>发表在《<a href="http://www.wpdiary.me/1752.html/comment-page-1#comment-1019">时间管理四象限法</a>》</li><li class="recentcomments"><span class="comment-author-link">小王</span>发表在《<a href="http://www.wpdiary.me/1752.html/comment-page-1#comment-1008">时间管理四象限法</a>》</li><li class="recentcomments"><span class="comment-author-link"><a href="http://leaver.me/" rel="external nofollow" class="url">bystander</a></span>发表在《<a href="http://www.wpdiary.me/1477.html/comment-page-1#comment-304">如何给WordPress的附件添加自定义字段</a>》</li><li class="recentcomments"><span class="comment-author-link">小王</span>发表在《<a href="http://www.wpdiary.me/1359.html/comment-page-1#comment-284">12个简洁漂亮的单页WordPress主题</a>》</li></ul></section><section id="categories-3" class="widget widget_categories widget-widget_categories"><h3 class="widget-title">分类目录</h3>		<ul>
+	<li class="cat-item cat-item-22"><a href="http://www.wpdiary.me/web-development" title="网站开发方面的文章，CSS教程，DIV，SEO，网站优化，网站设计，WEB标准，CSS+DIV，网站性能优化。">网站开发</a>
+</li>
+	<li class="cat-item cat-item-44"><a href="http://www.wpdiary.me/english" title="读美文学英语，英文美文欣赏。英语充电，英语学习，英语下午茶。外企工作英语，商务英语。">英语充电</a>
+</li>
+	<li class="cat-item cat-item-50"><a href="http://www.wpdiary.me/wordpress" title="wordpress主题分享，wordpress教程，wordpress优化，wordpress seo，wordpress使用过程中的问题及解决方法。">WordPress</a>
+</li>
+	<li class="cat-item cat-item-39"><a href="http://www.wpdiary.me/android" title="谷歌操作系统Android，Android应用，Android应用开发，Android游戏开发，Android开发教程。">Android</a>
+</li>
+	<li class="cat-item cat-item-28"><a href="http://www.wpdiary.me/ci" title="持续集成的定义，持续集成的优点，持续集成环境的搭建，持续集成实践。">持续集成</a>
+</li>
+	<li class="cat-item cat-item-1"><a href="http://www.wpdiary.me/life" title="分享生活中的点点滴滴，酸甜苦辣，所见所闻，爱好，记录成长历程。">生活</a>
+</li>
+	<li class="cat-item cat-item-7"><a href="http://www.wpdiary.me/everything" title="神马都是浮云。">神马都有</a>
+</li>
+	<li class="cat-item cat-item-53"><a href="http://www.wpdiary.me/seo-2" title="seo搜索引擎优化基础，seo搜索引擎优化技巧和方法，seo搜索引擎优化视频教程。">SEO</a>
+</li>
+	<li class="cat-item cat-item-106"><a href="http://www.wpdiary.me/python-2/django">Django</a>
+</li>
+	<li class="cat-item cat-item-61"><a href="http://www.wpdiary.me/magento-theme">Magento Theme</a>
+</li>
+	<li class="cat-item cat-item-105"><a href="http://www.wpdiary.me/python-2">Python</a>
+</li>
+	<li class="cat-item cat-item-55"><a href="http://www.wpdiary.me/wordpress/wordpress-themes" title="wordpress themes,wordpress templates,wordpress主题，wordpress模板">WordPress主题</a>
+</li>
+	<li class="cat-item cat-item-110"><a href="http://www.wpdiary.me/%e6%8a%80%e6%9c%af%e4%ba%ba%e5%91%98%e5%ad%a6%e7%ae%a1%e7%90%86" title="技术人员学管理">技术人员学管理</a>
+</li>
+	<li class="cat-item cat-item-67"><a href="http://www.wpdiary.me/programing" title="程序员的编程人生">编程</a>
+</li>
+	<li class="cat-item cat-item-111"><a href="http://www.wpdiary.me/%e8%81%8c%e5%9c%ba">职场</a>
+</li>
+		</ul>
+</section><section id="meta-5" class="widget widget_meta widget-widget_meta"><h3 class="widget-title">功能</h3>			<ul>
+						<li><a href="http://www.wpdiary.me/wp-login.php">登录</a></li>
+			<li><a href="http://www.wpdiary.me/feed">文章<abbr title="Really Simple Syndication">RSS</abbr></a></li>
+			<li><a href="http://www.wpdiary.me/comments/feed">评论<abbr title="Really Simple Syndication">RSS</abbr></a></li>
+<li><a href="https://cn.wordpress.org/" title="基于WordPress，一个优美、先进的个人信息发布平台。">WordPress.org</a></li>			</ul>
+</section>		</div><!-- .wrap -->
+	</aside><!-- #sidebar-subsidiary .aside -->
+
+
+		<footer id="footer">
+
+			<div class="wrap">
+
+				<div class="footer-content">
+					<p class="copyright">Copyright © 2015 <a class="site-link" href="http://www.wpdiary.me/" title="Wang Peng {blog}" rel="home"><span>Wang Peng {blog}</span></a>.</p><p class="credit">Powered by <a class="wp-link" href="http://wordpress.org/" title="State-of-the-art semantic personal publishing platform"><span>WordPress</span></a> and <a class="theme-link" href="http://themehall.com/plain-wp-free-responsive-wordpress-theme/" title="Plain WP WordPress Theme"><span>Plain WP</span></a>.</p>				</div><!-- .footer-content -->
+
+			</div>
+
+		</footer><!-- #footer -->
+
+	</div><!-- #container -->
+
+	<script type="text/javascript" src="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/form.js"></script>
+<script type="text/javascript" src="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/prettify.js"></script>
+<script type="text/javascript" src="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/launch.js"></script>
+<script type="text/javascript" src="Windows%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97%28MSMQ%29%E7%AE%80%E4%BB%8B_files/comment-reply.js"></script>
+
+
+</body></html>

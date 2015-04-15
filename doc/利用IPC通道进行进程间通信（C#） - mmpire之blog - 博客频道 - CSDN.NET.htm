@@ -1,0 +1,1043 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/alog.js" async=""></script>    
+    <script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ga.js" async="" type="text/javascript"></script><script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/tracking.js" charset="utf-8"></script>  
+
+    <script type="text/javascript">
+        var protocol = window.location.protocol;
+        document.write('<script type="text/javascript" src="' + protocol + '//csdnimg.cn/pubfooter/js/repoAddr2.js?v=' + Math.random() + '"></' + 'script>');
+    </script><script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/repoAddr2.js"></script>
+
+     <script id="allmobilize" charset="utf-8" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/allmobilize.js"></script><style type="text/css"></style>
+ <meta http-equiv="Cache-Control" content="no-siteapp"><link rel="alternate" media="handheld" href="#">
+
+    <title>利用IPC通道进行进程间通信（C#） - mmpire之blog
+        - 博客频道 - CSDN.NET</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="&nbsp; 有一个解决方案，其中包括一个Windows服务和一个Windows应用程序，两者之间需要进行通信。查了下，可以使用多种方法，如Web service（适用于不同系统及跨平台情况）、.NET Remoting、消息队列、WCF（集成了前述方法的功能，但太新，不支持Windows2000及以前的系统），其中Remoting可以支持TCP、HTTP、IPC通道的通信，而IPC通道速度快，且仅能供处于">
+    <script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/jquery.js" type="text/javascript"></script>
+    <script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad.js"></script>
+        <!--new top-->
+       
+        <link rel="stylesheet" href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/index.css">
+        <!--new top-->
+
+    <link rel="Stylesheet" type="text/css" href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/style_002.css">
+    <link id="RSSLink" title="RSS" type="application/rss+xml" rel="alternate" href="http://blog.csdn.net/mmpire/rss/list">
+    <link rel="shortcut icon" href="http://c.csdnimg.cn/public/favicon.ico">
+    <link type="text/css" rel="stylesheet" href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/default.css">
+ 
+
+
+<script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/share.js"></script><link href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/job_reco.css" type="text/css" rel="stylesheet"><script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/main_002.js" charset="utf-8" type="text/javascript"></script><link type="text/css" rel="stylesheet" href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/bdsstyle.css"><style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Hover_Arrow {position: absolute; width: 15px; height: 11px; cursor: pointer}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; color: #666666}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_Menu_Close {position: absolute; width: 31px; height: 31px; top: -15px; left: -15px}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1px; bottom: 2px; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/b5m.js" charset="utf-8" id="b5mmain" type="text/javascript"></script><script name="baidu-tc-cerfication" async="" data-appid="3629560" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/lightapp.js" charset="utf-8"></script><link rel="stylesheet" type="text/css" href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/style.css"><link href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/style_003.css" rel="stylesheet" type="text/css"><script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/logger.js"></script><script charset="utf-8" type="text/javascript" async="" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/get"></script><script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/cloudaapi"></script><script _md_="_anymoore_http://apps.bdimg.com/cloudaapi/pkg/helper-utils-moplus-monitor_100e0a8.js" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/helper-utils-moplus-monitor_100e0a8.js" charset="utf-8" type="text/javascript"></script><link href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/share_style0_16.css" rel="stylesheet"><script _md_="_anymoore_http://apps.bdimg.com/cloudaapi/pkg/push-smartBar_63a6378.js" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/push-smartBar_63a6378.js" charset="utf-8" type="text/javascript"></script><script _md_="_anymoore_http://apps.bdimg.com/cloudaapi/pkg/app-socialshare_3d15544.js" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/app-socialshare_3d15544.js" charset="utf-8" type="text/javascript"></script><script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/cloudaapi"></script><script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/weakBindLight"></script><script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/cloudaapi"></script><script _md_="_anymoore_http://apps.bdimg.com/cloudaapi/pkg/account-pay_72c563b.js" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/account-pay_72c563b.js" charset="utf-8" type="text/javascript"></script></head>
+<body style="padding-bottom: 45px;" class=" hPC"><div style="display: none;" id="MathJax_Message"></div><iframe style="display: none;" frameborder="0"></iframe>
+    
+   
+      <!--new top-->
+    <script id="toolbar-tpl-scriptId" fixed="true" prod="blog" skin="black" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/html.js" type="text/javascript"></script><div class="csdn-toolbar csdn-toolbar-skin-black ">        <div class="container row center-block ">          <div class="col-md-3 pull-left logo clearfix"><a href="http://www.csdn.net/?ref=toolbar" title="CSDN首页" target="_blank" class="icon"></a><a title="频道首页" href="http://blog.csdn.net/?ref=toolbar_logo" target="_blank" class="img blog-icon"></a></div>          <div class="pull-right login-wrap unlogin">            <ul class="btns">              <li class="loginlink"><a href="https://passport.csdn.net/account/login?ref=toolbar" target="_top">登录&nbsp;</a>|<a target="_top" href="https://passport.csdn.net/account/register?ref=toolbar">&nbsp;注册</a></li>              <li class="search">                <div class="icon on-search-icon">                  <div class="wrap">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                    <form action="http://so.csdn.net/search" method="get" target="_blank">                      <input value="toolbar" name="ref" accesskey="2" type="hidden">                      <div class="border">                        <input placeholder="搜索" name="q" accesskey="2" type="text"><span class="icon-enter-sm"></span>                      </div>                    </form>                  </div>                </div>              </li>              <li class="favor">                <div class="icon on-favor-icon">                  <div class="wrap">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                    <div style="display:none;" class="favor-success"><span class="msg">收藏成功</span>                      <div class="btns"><span class="btn btn-primary ok">确定</span></div>                    </div>                    <div style="display:none;" class="favor-failed"><span class="icon-danger-lg"></span><span class="msg">收藏失败，请重新收藏</span>                      <div class="btns"><span class="btn btn-primary ok">确定</span></div>                    </div>                    <form role="form" class="form-horizontal favor-form">                      <div class="form-group">                        <div class="clearfix">                          <label for="input-title" class="col-sm-2 control-label">标题</label>                          <div class="col-sm-10">                            <input value="利用IPC通道进行进程间通信（C#） - mmpire之blog - 博客频道 - CSDN.NET" id="inputTitle" placeholder="" class="title form-control" type="text">                          </div>                        </div>                        <div class="alert alert-danger"><strong></strong>标题不能为空</div>                      </div>                      <div class="form-group">                        <label for="input-url" class="col-sm-2 control-label">网址</label>                        <div class="col-sm-10">                          <input value="http://blog.csdn.net/mmpire/article/details/2408578" id="input-url" placeholder="" class="url form-control" type="text">                        </div>                      </div>                      <div class="form-group">                        <label for="input-tag" class="col-sm-2 tag control-label">标签</label>                        <div class="col-sm-10">                          <input id="input-tag" class="form-control tag" type="text">                        </div>                      </div>                      <div class="form-group">                        <label for="input-description" class="description col-sm-2 control-label">摘要</label>                        <div class="col-sm-10">                          <textarea id="input-description" class="form-control description"></textarea>                        </div>                      </div>                      <div class="form-group">                        <div class="col-sm-offset-2 col-sm-10 ft">                          <div class="col-sm-4 pull-left">                            <div class="checkbox">                              <label>                                <input name="share" checked="checked" class="share" type="checkbox">公开                              </label>                            </div>                          </div>                          <div class="col-sm-8 pull-right favor-btns">                            <button type="button" class="cancel btn btn-default">取消</button>                            <button type="submit" class="submit btn btn-primary">收藏</button>                          </div>                        </div>                      </div>                    </form>                  </div>                </div>              </li>              <li class="notify">                <div style="display:none" class="number"></div>                <div style="display:none" class="icon-hasnotes-sm"></div>                <div id="header_notice_num"></div>                <div class="icon on-notify-icon">                  <div class="wrap">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                    <div id="note1" class="csdn_note">                      <div class="box"></div>                    <iframe src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/a.htm" allowtransparency="true" style="z-index:-1;position:absolute;top:0;left:0;width:100%;height:100%;background:transparent" frameborder="0"></iframe></div>                  </div>                </div>              </li>              <li class="ugc">                <div class="icon on-ugc-icon">                  <div class="wrap clearfix">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                    <dl>                      <dt><a href="http://geek.csdn.net/news/expert?ref=toolbar" target="_blank" class="p-news clearfix"><em class="icon"></em><span>分享资讯</span></a></dt>                      <dt><a href="http://share.csdn.net/slides/new?ref=toolbar" target="_blank" class="p-doc clearfix"><em class="icon"></em><span>传PPT/文档</span></a></dt>                      <dt><a href="http://bbs.csdn.net/topics/new?ref=toolbar" target="_blank" class="p-ask clearfix"><em class="icon"></em><span>提问题</span></a></dt>                      <dt><a href="http://write.blog.csdn.net/postedit?ref=toolbar" target="_blank" class="p-blog clearfix"><em class="icon"></em><span>写博客</span></a></dt>                      <dt><a href="http://u.download.csdn.net/upload?ref=toolbar" target="_blank" class="p-src clearfix"><em class="icon"></em><span>传资源</span></a></dt>                      <dt><a href="https://code.csdn.net/projects/new?ref=toolbar" target="_blank" class="c-obj clearfix"><em class="icon"></em><span>创建项目</span></a></dt>                      <dt><a href="https://code.csdn.net/snippets/new?ref=toolbar" target="_blank" class="c-code clearfix"><em class="icon"></em><span>创建代码片</span></a></dt>                    </dl>                  </div>                </div>              </li>              <li class="profile">                <div class="icon on-profile-icon"><img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/100x100.jpg" class="curr-icon-img">                  <div class="wrap clearfix">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                    <div class="bd">                      <dl class="clearfix">                        <dt class="pull-left img"><a target="_blank" href="http://my.csdn.net/?ref=toolbar" class="avatar"><img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/100x100.jpg"></a></dt>                        <dd class="info" style="border: none;"><a target="_blank" href="http://my.csdn.net/?ref=toolbar" class="nickname"></a><a class="set-nick" href="https://passport.csdn.net/account/profile">设置昵称<span class="write-icon"></span></a><span class="dec"><a class="fill-dec" href="http://my.csdn.net/" target="_blank">编辑自我介绍，让更多人了解你<span class="write-icon"></span></a></span></dd>                      </dl>                    </div>                    <div class="ft clearfix"><a target="_blank" href="http://my.csdn.net/my/account/changepwd?ref=toolbar" class="pull-left"><span class="icon-cog"></span>帐号设置</a><a href="https://passport.csdn.net/account/logout?ref=toolbar" target="_top" class="pull-left" style="margin-left:132px; width:18px; height:27px; white-space:nowrap; overflow:hidden;"><span class="icon-signout"></span><span class="out">退出</span></a></div>                  </div>                </div>              </li>              <li class="apps">                <div style="display: none;" id="chasnew123" class="hasnew"></div>                <div id="cappsarea123" class="icon on-apps-icon">                  <div class="wrap clearfix">                    <div class="curr-icon-wrap">                      <div class="curr-icon"></div>                    </div>                  <div class="detail">                    <dl>                      <dt>                        <h5>社区</h5>                      </dt>                      <dd> <a href="http://blog.csdn.net/?ref=toolbar" target="_blank">博客</a></dd>                      <dd> <a href="http://bbs.csdn.net/?ref=toolbar" target="_blank">论坛</a></dd>                      <dd> <a href="http://download.csdn.net/?ref=toolbar" target="_blank">下载</a></dd>                      <dd><a href="http://ask.csdn.net/?ref=toolbar" target="_blank">技术问答</a></dd>                      <dd><a href="http://geek.csdn.net/?ref=toolbar" target="_blank">极客头条</a></dd>                      <dd> <a href="http://hero.csdn.net/?ref=toolbar" target="_blank">英雄会</a></dd>                    </dl>                  </div>                  <div class="detail">                    <dl>                      <dt>                        <h5>服务</h5>                      </dt>                      <dd> <a href="http://job.csdn.net/?ref=toolbar" target="_blank">JOB<img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/new.gif" style="display: none; margin-top: -26px; width: 23px;"></a></dd>                      <dd> <a href="http://edu.csdn.net/?ref=toolbar" target="_blank">学院<img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/new.gif" style="display: none; margin-top: -26px; width: 23px;"></a></dd>                      <dd> <a href="https://code.csdn.net/?ref=toolbar" target="_blank">CODE</a></dd>                      <dd> <a href="http://huiyi.csdn.net/?ref=toolbar" target="_blank">活动</a></dd>                      <dd> <a href="http://www.csto.com/?ref=toolbar" target="_blank">CSTO</a></dd>                      <dd> <a href="http://mall.csdn.net/?ref=toolbar" target="_blank">C币兑换<img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/new.gif" style="display: none; margin-top: -26px; width: 23px;"></a></dd>                    </dl>                  </div>                  <div class="detail last">                    <dl>                      <dt>                        <h5>俱乐部</h5>                      </dt>                      <dd> <a href="http://cto.csdn.net/?ref=toolbar" target="_blank">CTO俱乐部</a></dd>                      <dd> <a href="http://student.csdn.net/?ref=toolbar" target="_blank">高校俱乐部</a></dd>                    </dl>                  </div>                </div>              </div>            </li>            </ul>          </div>        </div>    </div>
+     <!--new top-->
+    <div id="container">
+        <div id="header">
+    <div class="header">
+        <div id="blog_title">
+            <h2>
+                <a href="http://blog.csdn.net/mmpire">mmpire之blog</a></h2>
+            <h3>－|以身外身 做梦中梦|－</h3>
+            <div class="clear">
+            </div>
+        </div>
+        <div class="clear">
+        </div>
+    </div>
+</div>
+<div id="navigator">
+    <div class="navigator_bg">
+    </div>
+    <div class="navigator">
+        <ul>
+            
+                <li id="btnContents"><a href="http://blog.csdn.net/mmpire?viewmode=contents"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_mulu'])">
+                    <img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ico_list.gif">目录视图</span></a></li>
+                <li id="btnView"><a href="http://blog.csdn.net/mmpire?viewmode=list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_zhaiyao'])">
+                    <img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ico_summary.gif">摘要视图</span></a></li>
+                <li id="btnRss"><a href="http://blog.csdn.net/mmpire/rss/list"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_RSS'])">
+                    <img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ico_rss.gif">订阅</span></a></li>                
+
+            </ul>
+    </div>
+</div>
+<script type="text/javascript">
+    var username = "mmpire";
+    var _blogger = username;
+    var blog_address = "http://blog.csdn.net/mmpire";
+    var static_host = "http://static.blog.csdn.net";
+    var currentUserName = "";  
+</script>
+
+        <div id="body">
+            <div id="main">
+                <div class="main">
+                        <div class="ad_class">
+<div class="notice tracking-ad" data-mod="popu_3"> 
+
+<a target="_blank" href="http://www.csdn.net/article/2015-04-13/2824462-web">
+<font color="blue">社区之星王海庆：速度激情，学习极客</font></a>
+&nbsp;&nbsp;&nbsp;
+
+
+
+<a target="_blank" href="http://blog.csdn.net/csdnproduct/article/details/43561659">
+<font color="red">Markdown轻松写博文</font></a>
+&nbsp;&nbsp;&nbsp;
+
+
+
+<a target="_blank" href="http://edu.csdn.net/course?keywords=%E5%BE%AE%E4%BF%A1%E5%BC%80%E5%8F%91">
+<font color="blue">微信公众平台开发
+</font></a>
+&nbsp;&nbsp;&nbsp;
+
+
+
+<a target="_blank" href="http://bbs.csdn.net/topics/391008139">
+<font color="red">天天爱答题 一大波C币袭来
+</font></a>
+&nbsp;&nbsp;&nbsp;
+
+
+
+<a target="_blank" href="http://blog.csdn.net/blogdevteam/article/details/44561379">
+<font color="blue">读文章送好书
+</font></a>
+&nbsp;&nbsp;&nbsp;
+
+
+</div>                        </div>
+                        
+
+  
+<link href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/comment1.css" type="text/css" rel="stylesheet">
+<link href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/style1.css" type="text/css" rel="stylesheet">
+<script language="JavaScript" type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/jquery_002.js"></script>
+<script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/main.js"></script>
+
+
+<link rel="stylesheet" href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/markdown_views.css">
+
+<script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/MathJax.js"></script>
+
+
+
+
+
+
+
+
+
+  <script type="text/ecmascript">
+      window.quickReplyflag = true;
+    </script>
+<div id="article_details" class="details">
+    <div class="article_title">   
+         <span class="ico ico_type_Original"></span>
+
+
+    <h1>
+        <span class="link_title"><a href="http://blog.csdn.net/mmpire/article/details/2408578">
+        利用IPC通道进行进程间通信（C#）
+        </a></span>
+    </h1>
+</div>
+
+    <div class="article_manage">
+        <span class="link_categories">
+        分类：
+            <a href="http://blog.csdn.net/mmpire/article/category/29474" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_fenlei']);">工作记录</a> 
+        </span>
+    <span class="link_postdate">2008-05-07 11:48</span>
+    <span class="link_view" title="阅读次数">3631人阅读</span>
+    <span class="link_comments" title="评论次数"><a href="#comments" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_pinglun'])">评论</a>(1)</span>
+    <span class="link_collect"><a href="javascript:void(0);" onclick="javascript:_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shoucang']);collectArticle('利用IPC通道进行进程间通信（C#）','2408578');return false;" title="收藏">收藏</a></span>
+    <span class="link_report"><a href="#report" onclick="javascript:_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_jubao']);report(2408578,2);return false;" title="举报">举报</a></span>
+    
+</div>
+<div class="tag2box"><a href="http://www.csdn.net/tag/c%23" target="_blank" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">c#</a><a href="http://www.csdn.net/tag/server" target="_blank" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">server</a><a href="http://www.csdn.net/tag/string" target="_blank" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">string</a><a href="http://www.csdn.net/tag/windows" target="_blank" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">windows</a><a href="http://www.csdn.net/tag/constructor" target="_blank" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">constructor</a><a href="http://www.csdn.net/tag/class" target="_blank" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_tag']);">class</a></div>
+
+  
+    
+<div id="article_content" class="article_content">
+<p>&nbsp; 
+有一个解决方案，其中包括一个Windows服务和一个Windows应用程序，两者之间需要进行通信。查了下，可以使用多种方法，如Web 
+service（适用于不同系统及跨平台情况）、.NET 
+Remoting、消息队列、WCF（集成了前述方法的功能，但太新，不支持Windows2000及以前的系统），其中Remoting可以支持
+TCP、HTTP、IPC通道的通信，而IPC通道速度快，且仅能供处于同一个系统中的进程间进行通讯，而这正好符合本项目的要求，故决定采用.NET 
+Remoting的IPC方法：</p>
+<div>&nbsp;</div>
+<div>开发平台为Visual Studio 2005，.NET framework版本为2.0</div>
+<div style="MARGIN-LEFT: 39pt; TEXT-INDENT: -18pt"><span>1、&nbsp;</span>建立空白解决方案</div>
+<div style="MARGIN-LEFT: 39pt; TEXT-INDENT: -18pt"><span>2、&nbsp;</span>添加两个新工程项目Console Application：Server和Client</div>
+<div style="MARGIN-LEFT: 39pt; TEXT-INDENT: -18pt"><span>3、&nbsp;</span>添加一个Class Library：RemoteObject</div>
+<div style="MARGIN-LEFT: 39pt; TEXT-INDENT: -18pt"><span>4、&nbsp;</span>三个项目的源代码Server.cs、Client.cs、RemoteObject.cs分别附后</div>
+<div style="MARGIN-LEFT: 39pt; TEXT-INDENT: -18pt"><span>5、&nbsp;</span>在Server和Client项目的引用中添加两个程序集：<br>System.Runtime.Remoting程序集（<span>.net组件）和RemoteObject程序集（工程组件）</span></div>
+<div style="MARGIN-LEFT: 39pt; TEXT-INDENT: -18pt"><span>6、&nbsp;</span>生成两个工程之后，双击打开<span>Server程序，再打开Client，可以看到两者通信。</span></div>
+<div style="MARGIN-LEFT: 39pt; TEXT-INDENT: -18pt"><span>7、&nbsp;</span>程序逻辑很简单：<span><br>Client根据约定好的对象地址（URI）“</span><span style="FONT-SIZE: 9pt; COLOR: maroon">ipc://ServerChannel/RemoteObject</span>”去服务器上访问<span>RemoteObject
+对象。Server在收到访问对象的消息之后，实例化一个RemoteObject对象。当Client得到生成的RemoteObject对象句柄后，
+调用其Greeting方法，这个调用被传递到Server端执行（因为RemoteObject对象实际上是在Server上），然后返回
+Greeting方法的结果给Client。</span></div>
+<div style="MARGIN-LEFT: 39pt; TEXT-INDENT: -18pt"><span>8、&nbsp;</span>简言之，即完成了Client进程访问Server进程的一个对象，并调用此对象的方法的任务。</div>
+<div style="MARGIN-LEFT: 39pt; TEXT-INDENT: -18pt"><span>9、&nbsp;</span>源代码：</div>
+<div style="MARGIN-LEFT: 21pt">RemoteObject.cs</div>
+<p>
+</p><table style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; MARGIN-LEFT: 32.4pt; BORDER-LEFT: medium none; WIDTH: 378pt; BORDER-BOTTOM: medium none; BORDER-COLLAPSE: collapse" border="1" cellpadding="0" cellspacing="0" width="504">
+    <tbody>
+        <tr>
+            <td style="BORDER-RIGHT: windowtext 1pt solid; PADDING-RIGHT: 5.4pt; BORDER-TOP: windowtext 1pt solid; PADDING-LEFT: 5.4pt; PADDING-BOTTOM: 0cm; BORDER-LEFT: windowtext 1pt solid; WIDTH: 378pt; PADDING-TOP: 0cm; BORDER-BOTTOM: windowtext 1pt solid" valign="top" width="504">
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">using</span><span style="FONT-SIZE: 9pt"> System;</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">public</span><span style="FONT-SIZE: 9pt"> <span style="COLOR: blue">class</span> <span style="COLOR: teal">RemoteObject</span> : <span style="COLOR: teal">MarshalByRefObject</span></span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">{</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">public</span> RemoteObject()</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp; {</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: teal">Console</span>.WriteLine(<span style="COLOR: maroon">"Constructor called"</span>);</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp; }</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">public</span> <span style="COLOR: blue">string</span> Greeting(<span style="COLOR: blue">string</span> name)</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp; {</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: teal">Console</span>.WriteLine(<span style="COLOR: maroon">"Greeting called"</span>);</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">return</span> <span style="COLOR: maroon">"Hello,"</span> + name;</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp; }</span></div>
+            <div style="LINE-HEIGHT: 12pt"><span style="FONT-SIZE: 9pt">}</span></div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p></p>
+<div style="MARGIN-LEFT: 21pt">Server.cs</div>
+<p>
+</p><table style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; MARGIN-LEFT: 32.4pt; BORDER-LEFT: medium none; WIDTH: 378pt; BORDER-BOTTOM: medium none; BORDER-COLLAPSE: collapse" border="1" cellpadding="0" cellspacing="0" width="504">
+    <tbody>
+        <tr>
+            <td style="BORDER-RIGHT: windowtext 1pt solid; PADDING-RIGHT: 5.4pt; BORDER-TOP: windowtext 1pt solid; PADDING-LEFT: 5.4pt; PADDING-BOTTOM: 0cm; BORDER-LEFT: windowtext 1pt solid; WIDTH: 378pt; PADDING-TOP: 0cm; BORDER-BOTTOM: windowtext 1pt solid" valign="top" width="504">
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">using</span><span style="FONT-SIZE: 9pt"> System;</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">using</span><span style="FONT-SIZE: 9pt"> System.Runtime.Remoting;</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">using</span><span style="FONT-SIZE: 9pt"> System.Runtime.Remoting.Channels;</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">using</span><span style="FONT-SIZE: 9pt"> System.Runtime.Remoting.Channels.Ipc;</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left">&nbsp;</div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">public</span><span style="FONT-SIZE: 9pt"> <span style="COLOR: blue">class</span> <span style="COLOR: teal">Server</span></span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">{</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">public</span> <span style="COLOR: blue">static</span> <span style="COLOR: blue">void</span> Main(<span style="COLOR: blue">string</span>[] args)</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp; {</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: green">//Instantiate our server channel.</span></span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: teal">IpcServerChannel</span> channel = <span style="COLOR: blue">new</span> <span style="COLOR: teal">IpcServerChannel</span>(<span style="COLOR: maroon">"ServerChannel"</span>);</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: green">//Register the server channel.</span></span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: teal">ChannelServices</span>.RegisterChannel(channel, <span style="COLOR: blue">false</span>);</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: green">//Register this service type.</span></span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: teal">RemotingConfiguration</span>.RegisterWellKnownServiceType(<span style="COLOR: blue">typeof</span>(<span style="COLOR: teal">RemoteObject</span>), <span style="COLOR: maroon">"RemoteObject"</span>, <span style="COLOR: teal">WellKnownObjectMode</span>.SingleCall);</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: teal">Console</span>.WriteLine(<span style="COLOR: maroon">"press return to exit"</span>);</span></div>
+            <div style="LINE-HEIGHT: 12pt"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: teal">Console</span>.ReadLine();</span></div>
+            <div style="TEXT-INDENT: 22.5pt; LINE-HEIGHT: 12pt"><span style="FONT-SIZE: 9pt">}</span></div>
+            <div style="LINE-HEIGHT: 12pt"><span style="FONT-SIZE: 9pt">}</span></div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p></p>
+<div style="MARGIN-LEFT: 21pt">Client.cs</div>
+<p>
+</p><table style="BORDER-RIGHT: medium none; BORDER-TOP: medium none; MARGIN-LEFT: 32.4pt; BORDER-LEFT: medium none; WIDTH: 378pt; BORDER-BOTTOM: medium none; BORDER-COLLAPSE: collapse" border="1" cellpadding="0" cellspacing="0" width="504">
+    <tbody>
+        <tr>
+            <td style="BORDER-RIGHT: windowtext 1pt solid; PADDING-RIGHT: 5.4pt; BORDER-TOP: windowtext 1pt solid; PADDING-LEFT: 5.4pt; PADDING-BOTTOM: 0cm; BORDER-LEFT: windowtext 1pt solid; WIDTH: 378pt; PADDING-TOP: 0cm; BORDER-BOTTOM: windowtext 1pt solid" valign="top" width="504">
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">using</span><span style="FONT-SIZE: 9pt"> System;</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">using</span><span style="FONT-SIZE: 9pt"> System.Runtime.Remoting;</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">using</span><span style="FONT-SIZE: 9pt"> System.Runtime.Remoting.Channels;</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">using</span><span style="FONT-SIZE: 9pt"> System.Runtime.Remoting.Channels.Ipc;</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt; COLOR: blue">public</span><span style="FONT-SIZE: 9pt"> <span style="COLOR: blue">class</span> <span style="COLOR: teal">Client</span></span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">{</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">public</span> <span style="COLOR: blue">static</span> <span style="COLOR: blue">void</span> Main(<span style="COLOR: blue">string</span>[] args)</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp; {</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: green">//Create an IPC client channel.</span></span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;<span style="COLOR: teal">IpcClientChannel</span> channel = <span style="COLOR: blue">new</span> <span style="COLOR: teal">IpcClientChannel</span>();</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: green">//Register the channel with ChannelServices.</span></span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: teal">ChannelServices</span>.RegisterChannel(channel, <span style="COLOR: blue">false</span>);</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: teal">RemoteObject</span> obj = (<span style="COLOR: teal">RemoteObject</span>)<span style="COLOR: teal">Activator</span>.GetObject(<span style="COLOR: blue">typeof</span>(<span style="COLOR: teal">RemoteObject</span>), <span style="COLOR: maroon">"ipc://ServerChannel/RemoteObject"</span>);</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">if</span> (obj == <span style="COLOR: blue">null</span>)</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: teal">Console</span>.WriteLine(<span style="COLOR: maroon">"could not locate server"</span>);</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">return</span>;</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: blue">for</span> (<span style="COLOR: blue">int</span> i = 1; i &lt; 5; i++)</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {</span></div>
+            <div style="LINE-HEIGHT: 12pt" align="left"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <span style="COLOR: teal">Console</span>.WriteLine(obj.Greeting(<span style="COLOR: maroon">"mmpire"</span>));</span></div>
+            <div style="LINE-HEIGHT: 12pt"><span style="FONT-SIZE: 9pt">&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;}</span></div>
+            <div style="TEXT-INDENT: 22.5pt; LINE-HEIGHT: 12pt"><span style="FONT-SIZE: 9pt">}</span></div>
+            <div style="LINE-HEIGHT: 12pt"><span style="FONT-SIZE: 9pt">}</span></div>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p></p>
+<div style="MARGIN-LEFT: 21pt; TEXT-INDENT: 5.25pt">Server输出：</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">press return to exit</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Constructor called</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Greeting called</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Constructor called</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Greeting called</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Constructor called</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Greeting called</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Constructor called</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Greeting called</div>
+<div style="MARGIN-LEFT: 21pt; TEXT-INDENT: 5.25pt">Client输出：</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Hello,mmpire</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Hello,mmpire</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Hello,mmpire</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">Hello,mmpire</div>
+<div style="MARGIN-LEFT: 84pt; TEXT-INDENT: 5.25pt">&nbsp;</div>
+<div style="MARGIN-LEFT: 21pt; TEXT-INDENT: 5.25pt">参考：&lt;C#高级编程&gt;</div>
+<p>&nbsp;</p></div>
+
+
+
+
+<!-- Baidu Button BEGIN -->
+
+<div data-bd-bind="1429107602460" class="bdsharebuttonbox bdshare-button-style0-16" style="float: right;">
+<a href="#" class="bds_more" data-cmd="more" style="background-position:0 0 !important; background-image: url(http://bdimg.share.baidu.com/static/api/img/share/icons_0_16.png?v=d754dcc0.png) !important"></a>
+<a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间" style="background-position:0 -52px !important"></a>
+<a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博" style="background-position:0 -104px !important"></a>
+<a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博" style="background-position:0 -260px !important"></a>
+<a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网" style="background-position:0 -208px !important"></a>
+<a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信" style="background-position:0 -1612px !important"></a>
+</div>
+<script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "1", "bdMiniList": false, "bdPic": "", "bdStyle": "0", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = 'http://bdimg.share.baidu.com/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+<!-- Baidu Button END -->
+
+<!--192.168.100.36-->
+<ul class="article_next_prev">
+            <li class="prev_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian']);location.href='/mmpire/article/details/2374906';">上一篇</span><a href="http://blog.csdn.net/mmpire/article/details/2374906" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_shangyipian'])">如何删除windows服务</a></li>
+            <li class="next_article"><span onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian']);location.href='/mmpire/article/details/2534934';">下一篇</span><a href="http://blog.csdn.net/mmpire/article/details/2534934" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_xiayipian'])">一些关于VANET的资料</a></li>
+</ul>
+
+<!-- Baidu Button BEGIN -->
+<script src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/bds_s_v2.js" type="text/javascript" id="bdshare_js" data="type=tools&amp;uid=1536434"></script>
+
+<script type="text/javascript">
+    document.getElementById("bdshell_js").src = "http://bdimg.share.baidu.com/static/js/shell_v2.js?cdnversion=" + Math.ceil(new Date()/3600000)
+</script>
+<!-- Baidu Button END -->
+
+
+</div>
+      <dl class="blog-associat-tag">
+        <dt>主题推荐</dt>
+        <dd>
+                <a href="http://www.csdn.net/tag/%E9%80%9A%E4%BF%A1" target="_blank" class="blog-tage-red">通信</a> 
+                <a href="http://www.csdn.net/tag/ipc" target="_blank" class="blog-tage-red">ipc</a> 
+                <a href="http://www.csdn.net/tag/visual%20studio%202005" target="_blank" class="blog-tage-red">visual studio 2005</a> 
+                <a href="http://www.csdn.net/tag/%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88" target="_blank" class="blog-tage-red">解决方案</a> 
+                <a href="http://www.csdn.net/tag/.net%20framework" target="_blank" class="blog-tage-red">.net framework</a> 
+        </dd>
+    </dl> 
+
+<style>
+.blog-ass-articl dd {
+color: #369;
+width: 99%; /*修改行*/
+float: left;
+overflow: hidden;
+font: normal normal 12px/23px "SimSun";
+height: 23px;
+margin: 0;
+padding: 0 0 0 10px;
+margin-right: 30px;
+background: url(../images/blog-dot-red3.gif) no-repeat 0 10px;
+}
+
+</style>
+
+<dl class="blog-ass-articl tracking-ad" data-mod="popu_36" id="res-relatived" style="height:  160px;"> 
+     <dt><span>猜你在找</span></dt>    
+
+     <div id="res" style="width: 42%;float: left;margin-right: 30px;"><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a target="_blank" href="http://blog.csdn.net/luckylion/article/details/6524159" title="Windows管道系统 － 命名管道" strategy="CFRecommendAlgorithm">Windows管道系统 － 命名管道</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a target="_blank" href="http://blog.csdn.net/ml3947/article/details/8844601" title="JavaFX即将进军移动平台" strategy="CFRecommendAlgorithm">JavaFX即将进军移动平台</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a target="_blank" href="http://blog.csdn.net/freeliver54/article/details/4610891" title="引C# WinForm DirectShow视频采集及图片抓取实例DxSnap" strategy="CFRecommendAlgorithm">引C# WinForm DirectShow视频采集及图片抓取实例DxSnap</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a target="_blank" href="http://blog.csdn.net/ggw128/article/details/7185440" title="杀进程的一些方法" strategy="CFRecommendAlgorithm">杀进程的一些方法</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a target="_blank" href="http://blog.csdn.net/yzzm521/article/details/1462789" title="如何获取与清除IE历史记录" strategy="CFRecommendAlgorithm">如何获取与清除IE历史记录</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a target="_blank" href="http://blog.csdn.net/ainibaifenbai/article/details/6711558" title="支持流媒体传输的网络协议" strategy="CFRecommendAlgorithm">支持流媒体传输的网络协议</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a target="_blank" href="http://blog.csdn.net/wanghao72214/article/details/3979971" title="也谈IT人员流失问题" strategy="CFRecommendAlgorithm">也谈IT人员流失问题</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a target="_blank" href="http://blog.csdn.net/dongdong230/article/details/40401259" title="测滑菜单MenuDrawer的使用以及解析" strategy="CFRecommendAlgorithm">测滑菜单MenuDrawer的使用以及解析</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a target="_blank" href="http://blog.csdn.net/startexcel/article/details/3505220" title="WPF继承自定义窗口" strategy="CFRecommendAlgorithm">WPF继承自定义窗口</a></dd><dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a target="_blank" href="http://blog.csdn.net/Baple/article/details/21526681" title="C# Control的Invoke和BeginInvoke及其实现机制消息循环" strategy="CFRecommendAlgorithm">C# Control的Invoke和BeginInvoke及其实现机制消息循环</a></dd></div>
+
+    <div id="adCollege" style="width: 42%;float: left;">
+            <dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;">
+                <a href="http://edu.csdn.net/course/detail/606" title="【精品课程】三维游戏引擎开发-渲染" strategy="SearchAlgorithm" target="_blank">【精品课程】三维游戏引擎开发-渲染</a></dd>
+            <dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;">
+                <a href="http://edu.csdn.net/course/detail/561" title="【精品课程】iOS开发教程之OC语言" strategy="SearchAlgorithm" target="_blank">【精品课程】iOS开发教程之OC语言</a></dd>
+            <dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;">
+                <a href="http://edu.csdn.net/course/detail/595" title="【精品课程】思科认证CCNPv2.0详解第3部分 IPSEC VPN技术" strategy="SearchAlgorithm" target="_blank">【精品课程】思科认证CCNPv2.0详解第3部分 IPSEC VPN技术</a></dd>
+            <dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;">
+                <a href="http://edu.csdn.net/course/detail/591" title="【精品课程】C语言入门教程" strategy="SearchAlgorithm" target="_blank">【精品课程】C语言入门教程</a></dd>
+            <dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;">
+                <a href="http://edu.csdn.net/course/detail/586" title="【精品课程】J2SE轻松入门第二季" strategy="SearchAlgorithm" target="_blank">【精品课程】J2SE轻松入门第二季</a></dd>
+    </div>
+   
+</dl>
+
+
+<div id="job_blog_reco"><dl class="blog-ass-articl tracking-ad" data-mod="popu_72"><dt><span>准备好了么？&nbsp;<label class="po_blg_detail_tiao">跳</label><label class="po_blg_detail_ba">吧</label><label class="po_blg_detail_th">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;！</label></span><a href="http://job.csdn.net/" target="_blank" class="po_blg_more">更多职位尽在&nbsp;<label class="po_blg_detail_csdn">CSDN JOB</label></a></dt><dd class="po_blg_dd"><div class="po_blg_po"><a href="http://job.csdn.net/Job/Index?jobID=82906" title="Java开发（中国移动融合通信）" strategy="DetailRecommend" target="_blank">Java开发（中国移动融合通信）</a></div><div class="po_blg_company"><a href="http://pr.csdn.net/enterprise/ent_home?orgid=213472" title="新媒传信(中国移动融合通信)" target="_blank">新媒传信(中国移动融合通信)</a></div><label class="po_blg_separator">|</label><div class="po_blg_salary"><a href="http://job.csdn.net/Job/Index?jobID=82906" target="_blank">15-30K/月</a></div><a class="po_blg_iwant" href="http://job.csdn.net/Job/Index?jobID=82906" target="_blank">我要跳槽</a></dd><dd class="po_blg_dd"><div class="po_blg_po"><a href="http://job.csdn.net/Job/Index?jobID=82731" title="ios开发（中国移动融合通信）" strategy="DetailRecommend" target="_blank">ios开发（中国移动融合通信）</a></div><div class="po_blg_company"><a href="http://pr.csdn.net/enterprise/ent_home?orgid=213472" title="新媒传信(中国移动融合通信)" target="_blank">新媒传信(中国移动融合通信)</a></div><label class="po_blg_separator">|</label><div class="po_blg_salary"><a href="http://job.csdn.net/Job/Index?jobID=82731" target="_blank">15-30K/月</a></div><a class="po_blg_iwant" href="http://job.csdn.net/Job/Index?jobID=82731" target="_blank">我要跳槽</a></dd><dd class="po_blg_dd"><div class="po_blg_po"><a href="http://job.csdn.net/Job/Index?jobID=85523" title="VoIP通信技术主程:" strategy="DetailRecommend" target="_blank">VoIP通信技术主程:</a></div><div class="po_blg_company"><a href="http://pr.csdn.net/enterprise/ent_home?orgid=436031" title="深圳市迈盛达信息技术有限公司" target="_blank">深圳市迈盛达信息技术有限公司</a></div><label class="po_blg_separator">|</label><div class="po_blg_salary"><a href="http://job.csdn.net/Job/Index?jobID=85523" target="_blank">15-30K/月</a></div><a class="po_blg_iwant" href="http://job.csdn.net/Job/Index?jobID=85523" target="_blank">我要跳槽</a></dd><dd class="po_blg_dd"><div class="po_blg_po"><a href="http://job.csdn.net/Job/Index?jobID=85185" title="c++客户端开发（中国移动融合通信）" strategy="DetailRecommend" target="_blank">c++客户端开发（中国移动融合通信）</a></div><div class="po_blg_company"><a href="http://pr.csdn.net/enterprise/ent_home?orgid=213472" title="新媒传信(中国移动融合通信)" target="_blank">新媒传信(中国移动融合通信)</a></div><label class="po_blg_separator">|</label><div class="po_blg_salary"><a href="http://job.csdn.net/Job/Index?jobID=85185" target="_blank">8-12K/月</a></div><a class="po_blg_iwant" href="http://job.csdn.net/Job/Index?jobID=85185" target="_blank">我要跳槽</a></dd></dl></div>
+
+<script type="text/javascript">
+    var searchtitletags = '利用IPC通道进行进程间通信（C#）' + ',' + '通信,ipc,visual studio 2005,解决方案,.net framework';
+    searchService({
+        index: 'blog',
+        query: searchtitletags,
+        from: 5,
+        size: 5,
+        appendTo: '#res',
+        url: 'recommend',
+        his: 2,
+        client: "blog_cf_enhance",
+        tmpl: '<dd style="background:url(http://static.blog.csdn.net/skin/default/images/blog-dot-red3.gif) no-repeat 0 10px;"><a href="#{ url }" title="#{ title }" strategy="#{ strategy }">#{ title }</a></dd>'
+    });
+
+ </script>   
+
+
+
+    <div id="ad_cen">
+   
+          <script type="text/javascript">
+              new Ad(4, 'ad_cen');
+          </script>
+    <iframe src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad.htm" style="border-width: 0px; overflow: hidden; width: 746px; height: 90px;" scrolling="no" id="ad_frm_0" frameborder="0"></iframe></div>
+<div class="comment_class">
+    <div id="comment_title" class="panel_head">
+        <span class="see_comment">查看评论</span><a name="comments"></a></div>
+    <div id="comment_list"><dl class="comment_item comment_topic" id="comment_item_2576381"><dt class="comment_head" floor="1">1楼 <span class="user"><a class="username" href="http://blog.csdn.net/orange0802" target="_blank">orange0802</a> <span class="ptime">2013-04-02 11:50发表</span>  <a href="#reply" class="cmt_btn reply" title="回复">[回复]</a> <span class="comment_manage" style="display:none;" commentid="2576381" username="orange0802"> <a href="#quote" class="cmt_btn quote" title="引用">[引用]</a> <a href="#report" class="cmt_btn report" title="举报">[举报]</a></span></span></dt><dd class="comment_userface"><a href="http://blog.csdn.net/orange0802" target="_blank"><img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/3_orange0802.gif" height="40" width="40"></a></dd><dd class="comment_body">我运行的时候，IpcServerChannel channel = new IpcServerChannel("ServerChannel");出现异常说“创建IPC端口失败：拒绝访问”，这是为什么啊？求帮助TT</dd></dl><div class="clear"></div></div>
+    <div style="display: none;" id="comment_bar">
+    </div>
+    <div id="comment_form"><div class="guest_link">您还没有登录,请<a href="javascript:void(0);" onclick="javascript:loginbox();">[登录]</a>或<a href="http://passport.csdn.net/account/register?from=http%3A%2F%2Fblog.csdn.net%2Fmmpire%2Farticle%2Fdetails%2F2408578">[注册]</a></div></div>
+
+    <div class="announce">
+        * 以上用户言论只代表其个人观点，不代表CSDN网站的观点或立场<a name="reply"></a><a name="quote"></a></div>
+</div>
+
+<script type="text/javascript">
+    var fileName = '2408578';
+    var commentscount = 1;
+    var islock = false
+</script>
+<script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/comment.js"></script>
+    <div id="ad_bot">
+    <iframe src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad_002.htm" style="border-width: 0px; overflow: hidden; width: 746px; height: 0px;" scrolling="no" id="ad_frm_1" frameborder="0"></iframe></div>
+    <script type="text/javascript">
+    new Ad(5, 'ad_bot');
+    </script>
+<div id="report_dialog">
+</div>
+
+<div id="d-top" style="bottom:60px;">
+        <a id="quick-reply" class="btn btn-top q-reply" title="快速回复" style="display:none;">
+            <img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/blog-icon-reply.png" alt="快速回复">
+        </a>    
+
+    <a id="d-top-a" class="btn btn-top backtop" style="display: none;" title="返回顶部" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_huidaodingbu'])">         
+         <img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/top.png" alt="TOP">
+    </a>
+</div>
+<script type="text/javascript">
+    $(function ()
+    {
+        $("#ad_frm_0").height("90px");
+        
+        setTimeout(function(){
+            $("#ad_frm_2").height("200px");
+        },1000);
+        
+        /*
+        if($("#comment_content").length>0)
+        {
+            $("#quick-reply").show();
+
+            $("#quick-reply").click(function(){
+                setEditorFocus();
+            });
+        }       
+     
+        var d_top = $('#d-top-a');
+
+        document.onscroll = function ()
+        {
+            var scrTop = (document.body.scrollTop || document.documentElement.scrollTop);
+            if (scrTop > 500)
+            {
+                d_top.show();
+            } else
+            {
+                d_top.hide();
+            }
+        }
+        $('#d-top-a').click(function ()
+        {
+            scrollTo(0, 0);
+            this.blur();
+            return false;
+        });
+        */
+    });
+  
+</script>
+<style type="text/css">
+    .tag_list
+    {
+        background: none repeat scroll 0 0 #FFFFFF;
+        border: 1px solid #D7CBC1;
+        color: #000000;
+        font-size: 12px;
+        line-height: 20px;
+        list-style: none outside none;
+        margin: 10px 2% 0 1%;
+        padding: 1px;
+    }
+    .tag_list h5
+    {
+        background: none repeat scroll 0 0 #E0DBD3;
+        color: #47381C;
+        font-size: 12px;
+        height: 24px;
+        line-height: 24px;
+        padding: 0 5px;
+        margin: 0;
+    }
+    .tag_list h5 a
+    {
+        color: #47381C;
+    }
+    .classify
+    {
+        margin: 10px 0;
+        padding: 4px 12px 8px;
+    }
+    .classify a
+    {
+        margin-right: 20px;
+        white-space: nowrap;
+    }
+</style>
+<div class="tag_list">
+    <h5>
+        <a href="http://www.csdn.net/tag/" target="_blank">核心技术类目</a></h5>
+    <div class="classify">
+<a title="全部主题" href="http://www.csdn.net/tag" target="_blank" onclick="LogClickCount(this,336);">全部主题</a>
+<a title="Hadoop" href="http://g.csdn.net/5272865" target="_blank" onclick="LogClickCount(this,336);">Hadoop</a>
+<a title="AWS" href="http://g.csdn.net/5272866" target="_blank" onclick="LogClickCount(this,336);">AWS</a>
+<a title="移动游戏" href="http://g.csdn.net/5272870" target="_blank" onclick="LogClickCount(this,336);">移动游戏</a>
+<a title="Java" href="http://g.csdn.net/5272871" target="_blank" onclick="LogClickCount(this,336);">Java</a>
+<a title="Android" href="http://g.csdn.net/5272872" target="_blank" onclick="LogClickCount(this,336);">Android</a>
+<a title="iOS" href="http://g.csdn.net/5272873" target="_blank" onclick="LogClickCount(this,336);">iOS</a>
+<a title="Swift" href="http://g.csdn.net/5272868" target="_blank" onclick="LogClickCount(this,336);">Swift</a>
+<a title="智能硬件" href="http://g.csdn.net/5272869" target="_blank" onclick="LogClickCount(this,336);">智能硬件</a>
+<a title="Docker" href="http://g.csdn.net/5272867" target="_blank" onclick="LogClickCount(this,336);">Docker</a>
+<a title="OpenStack" href="http://g.csdn.net/5272925" target="_blank" onclick="LogClickCount(this,336);">OpenStack</a>
+<a title="VPN" href="http://www.csdn.net/tag/vpn" target="_blank" onclick="LogClickCount(this,336);">VPN</a>
+<a title="Spark" href="http://g.csdn.net/5272924" target="_blank" onclick="LogClickCount(this,336);">Spark</a>
+<a title="ERP" href="http://www.csdn.net/tag/erp" target="_blank" onclick="LogClickCount(this,336);">ERP</a>
+<a title="IE10" href="http://www.csdn.net/tag/ie10" target="_blank" onclick="LogClickCount(this,336);">IE10</a>
+<a title="Eclipse" href="http://www.csdn.net/tag/eclipse" target="_blank" onclick="LogClickCount(this,336);">Eclipse</a>
+<a title="CRM" href="http://www.csdn.net/tag/crm" target="_blank" onclick="LogClickCount(this,336);">CRM</a>
+<a title="JavaScript" href="http://www.csdn.net/tag/javascript" target="_blank" onclick="LogClickCount(this,336);">JavaScript</a>
+<a title="数据库" href="http://www.csdn.net/tag/%E6%95%B0%E6%8D%AE%E5%BA%93" target="_blank" onclick="LogClickCount(this,336);">数据库</a>
+<a title="Ubuntu" href="http://www.csdn.net/tag/ubuntu" target="_blank" onclick="LogClickCount(this,336);">Ubuntu</a>
+<a title="NFC" href="http://www.csdn.net/tag/nfc" target="_blank" onclick="LogClickCount(this,336);">NFC</a>
+<a title="WAP" href="http://www.csdn.net/tag/wap" target="_blank" onclick="LogClickCount(this,336);">WAP</a>
+<a title="jQuery" href="http://www.csdn.net/tag/jquery" target="_blank" onclick="LogClickCount(this,336);">jQuery</a>
+<a title="BI" href="http://www.csdn.net/tag/bi" target="_blank" onclick="LogClickCount(this,336);">BI</a>
+<a title="HTML5" href="http://www.csdn.net/tag/html5" target="_blank" onclick="LogClickCount(this,336);">HTML5</a>
+<a title="Spring" href="http://www.csdn.net/tag/spring" target="_blank" onclick="LogClickCount(this,336);">Spring</a>
+<a title="Apache" href="http://www.csdn.net/tag/apache" target="_blank" onclick="LogClickCount(this,336);">Apache</a>
+<a title=".NET" href="http://www.csdn.net/tag/.net" target="_blank" onclick="LogClickCount(this,336);">.NET</a>
+<a title="API" href="http://www.csdn.net/tag/api" target="_blank" onclick="LogClickCount(this,336);">API</a>
+<a title="HTML" href="http://www.csdn.net/tag/html" target="_blank" onclick="LogClickCount(this,336);">HTML</a>
+<a title="SDK" href="http://www.csdn.net/tag/sdk" target="_blank" onclick="LogClickCount(this,336);">SDK</a>
+<a title="IIS" href="http://www.csdn.net/tag/iis" target="_blank" onclick="LogClickCount(this,336);">IIS</a>
+<a title="Fedora" href="http://www.csdn.net/tag/fedora" target="_blank" onclick="LogClickCount(this,336);">Fedora</a>
+<a title="XML" href="http://www.csdn.net/tag/xml" target="_blank" onclick="LogClickCount(this,336);">XML</a>
+<a title="LBS" href="http://www.csdn.net/tag/lbs" target="_blank" onclick="LogClickCount(this,336);">LBS</a>
+<a title="Unity" href="http://www.csdn.net/tag/unity" target="_blank" onclick="LogClickCount(this,336);">Unity</a>
+<a title="Splashtop" href="http://www.csdn.net/tag/splashtop" target="_blank" onclick="LogClickCount(this,336);">Splashtop</a>
+<a title="UML" href="http://www.csdn.net/tag/uml" target="_blank" onclick="LogClickCount(this,336);">UML</a>
+<a title="components" href="http://www.csdn.net/tag/components" target="_blank" onclick="LogClickCount(this,336);">components</a>
+<a title="Windows Mobile" href="http://www.csdn.net/tag/windowsmobile" target="_blank" onclick="LogClickCount(this,336);">Windows Mobile</a>
+<a title="Rails" href="http://www.csdn.net/tag/rails" target="_blank" onclick="LogClickCount(this,336);">Rails</a>
+<a title="QEMU" href="http://www.csdn.net/tag/qemu" target="_blank" onclick="LogClickCount(this,336);">QEMU</a>
+<a title="KDE" href="http://www.csdn.net/tag/kde" target="_blank" onclick="LogClickCount(this,336);">KDE</a>
+<a title="Cassandra" href="http://www.csdn.net/tag/cassandra" target="_blank" onclick="LogClickCount(this,336);">Cassandra</a>
+<a title="CloudStack" href="http://www.csdn.net/tag/cloudstack" target="_blank" onclick="LogClickCount(this,336);">CloudStack</a>
+<a title="FTC" href="http://www.csdn.net/tag/ftc" target="_blank" onclick="LogClickCount(this,336);">FTC</a>
+<a title="coremail" href="http://www.csdn.net/tag/coremail" target="_blank" onclick="LogClickCount(this,336);">coremail</a>
+<a title="OPhone " href="http://www.csdn.net/tag/ophone" target="_blank" onclick="LogClickCount(this,336);">OPhone </a>
+<a title="CouchBase" href="http://www.csdn.net/tag/couchbase" target="_blank" onclick="LogClickCount(this,336);">CouchBase</a>
+<a title="云计算" href="http://www.csdn.net/tag/%E4%BA%91%E8%AE%A1%E7%AE%97" target="_blank" onclick="LogClickCount(this,336);">云计算</a>
+<a title="iOS6" href="http://www.csdn.net/tag/iOS6" target="_blank" onclick="LogClickCount(this,336);">iOS6</a>
+<a title="Rackspace " href="http://www.csdn.net/tag/rackspace" target="_blank" onclick="LogClickCount(this,336);">Rackspace </a>
+<a title="Web App" href="http://www.csdn.net/tag/webapp" target="_blank" onclick="LogClickCount(this,336);">Web App</a>
+<a title="SpringSide" href="http://www.csdn.net/tag/springside" target="_blank" onclick="LogClickCount(this,336);">SpringSide</a>
+<a title="Maemo" href="http://www.csdn.net/tag/maemo" target="_blank" onclick="LogClickCount(this,336);">Maemo</a>
+<a title="Compuware" href="http://www.csdn.net/tag/compuware" target="_blank" onclick="LogClickCount(this,336);">Compuware</a>
+<a title="大数据" href="http://www.csdn.net/tag/%E5%A4%A7%E6%95%B0%E6%8D%AE" target="_blank" onclick="LogClickCount(this,336);">大数据</a>
+<a title="aptech" href="http://www.csdn.net/tag/aptech" target="_blank" onclick="LogClickCount(this,336);">aptech</a>
+<a title="Perl" href="http://www.csdn.net/tag/perl" target="_blank" onclick="LogClickCount(this,336);">Perl</a>
+<a title="Tornado" href="http://www.csdn.net/tag/tornado" target="_blank" onclick="LogClickCount(this,336);">Tornado</a>
+<a title="Ruby" href="http://www.csdn.net/tag/ruby" target="_blank" onclick="LogClickCount(this,336);">Ruby</a>
+<a title="Hibernate" href="http://www.csdn.net/hibernate" target="_blank" onclick="LogClickCount(this,336);">Hibernate</a>
+<a title="ThinkPHP" href="http://www.csdn.net/tag/thinkphp" target="_blank" onclick="LogClickCount(this,336);">ThinkPHP</a>
+<a title="HBase" href="http://www.csdn.net/tag/hbase" target="_blank" onclick="LogClickCount(this,336);">HBase</a>
+<a title="Pure" href="http://www.csdn.net/tag/pure" target="_blank" onclick="LogClickCount(this,336);">Pure</a>
+<a title="Solr" href="http://www.csdn.net/tag/solr" target="_blank" onclick="LogClickCount(this,336);">Solr</a>
+<a title="Angular" href="http://www.csdn.net/tag/angular" target="_blank" onclick="LogClickCount(this,336);">Angular</a>
+<a title="Cloud Foundry" href="http://www.csdn.net/tag/cloudfoundry" target="_blank" onclick="LogClickCount(this,336);">Cloud Foundry</a>
+<a title="Redis" href="http://www.csdn.net/tag/redis" target="_blank" onclick="LogClickCount(this,336);">Redis</a>
+<a title="Scala" href="http://www.csdn.net/tag/scala" target="_blank" onclick="LogClickCount(this,336);">Scala</a>
+<a title="Django" href="http://www.csdn.net/tag/django" target="_blank" onclick="LogClickCount(this,336);">Django</a>
+<a title="Bootstrap" href="http://www.csdn.net/tag/bootstrap" target="_blank" onclick="LogClickCount(this,336);">Bootstrap</a>
+    </div>
+</div>
+
+<div id="pop_win" style="display:none ;position: absolute; z-index: 10000; border: 1px solid rgb(220, 220, 220); top: 222.5px; left: 630px; opacity: 1; background: none 0px 0px repeat scroll rgb(255, 255, 255);">
+    
+</div>
+<div id="popup_mask"></div>
+<style>
+    #popup_mask
+    {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 9999;
+        left: 0px;
+        top: 0px;
+        opacity: 0.3;
+        filter: alpha(opacity=30);
+        display: none;
+    }
+
+</style>
+
+
+
+
+<script type="text/javascript">
+    $(function(){
+        setTimeout(function(){
+            $(".comment_body:contains('回复')").each(function(index,item){
+                var u=$(this).text().split('：')[0].toString().replace("回复","")
+                var thisComment=$(this);
+                if(u)
+                {
+                    $.getJSON("https://passport.csdn.net/get/nick?callback=?", {users: u}, function(a) {
+                        if(a!=null&&a.data!=null&&a.data.length>0)
+                        {
+                            nick=a.data[0].n; 
+                            if(u!=nick)
+                            {
+                                thisComment.text(thisComment.text().replace(u,nick));  
+                            }
+                        }       
+                    });  
+                }
+            });
+        },200);  
+        
+        setTimeout(function(){
+            $("a img[src='http://js.tongji.linezing.com/stats.gif']").parent().css({"position":"absolute","left":"50%"});
+        },300);
+    });
+
+    function loginbox(){
+        var $logpop=$("#pop_win");
+        $logpop.html('<iframe src="https://passport.csdn.net/account/loginbox?service=http://static.blog.csdn.net/callback.htm" frameborder="0" height="600" width="400" scrolling="no"></iframe>');
+
+        $('#popup_mask').css({
+            opacity: 0.5,
+            width: $( document ).width() + 'px',
+            height:  $( document ).height() + 'px'
+        });
+        $('#popup_mask').css("display","block");
+ 
+        $logpop.css( {
+            top: ($( window ).height() - $logpop.height())/ 2  + $( window 
+       ).scrollTop() + 'px',
+            left:($( window ).width() - $logpop.width())/ 2
+        } );
+ 
+        setTimeout( function () {
+            $logpop.show();
+            $logpop.css( {
+                opacity: 1
+            } );
+        }, 200 );
+ 
+        $('#popup_mask').unbind("click");
+        $('#popup_mask').bind("click", function(){
+            $('#popup_mask').hide();
+            var $clopop = $("#pop_win");
+            $("#common_ask_div_sc").css("display","none");
+            $clopop.css( {
+                opacity: 0
+            } );
+            setTimeout( function () {
+                $clopop.hide();
+            }, 350 );
+            return false;
+        });
+    }    
+
+</script>
+                        <div class="clear">
+                        </div>
+                    </div>                   
+                
+            </div>
+            <div id="side">
+    <div class="side">
+<div id="panel_Profile" class="panel">
+<ul class="panel_head"><span>个人资料</span></ul>
+<ul class="panel_body profile">
+<div id="blog_userface">
+    <a href="http://my.csdn.net/mmpire" target="_blank">
+    <img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/1_mmpire.gif" title="访问我的空间" style="max-width:90%">
+    </a>
+    <br>
+    <span><a href="http://my.csdn.net/mmpire" class="user_name" target="_blank">mmpire</a></span>
+</div>
+<div class="interact">
+<a href="javascript:void(0);" class="attent" id="span_add_follow" title="[加关注]" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_guanzhu'])"></a>
+
+ <a href="javascript:void(0);" class="letter" title="[发私信]" onclick="window.open('http://msg.csdn.net/letters/model?receiver=mmpire','_blank','height=350,width=700');_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_sixin'])"></a>  
+</div>
+<div id="blog_medal">
+                <div id="bms_box">
+               </div>
+</div>
+<ul id="blog_rank">
+    <li>访问：<span>232302次</span></li>
+    <li>积分：<span>3564</span> </li>    
+    <li>等级： <span style="position:relative;display:inline-block;z-index:1">
+            <img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/blog5.png" alt="" style="vertical-align: middle;" id="leveImg">
+            <div id="smallTittle" style=" position: absolute;  left: -24px;  top: 25px;  text-align: center;  width: 101px;  height: 32px;  background-color: #fff;  line-height: 32px;  border: 2px #DDDDDD solid;  box-shadow: 0px 2px 2px rgba (0,0,0,0.1);  display: none;   z-index: 999;">
+            <div style="left: 42%;  top: -8px;  position: absolute;  width: 0;  height: 0;  border-left: 10px solid transparent;  border-right: 10px solid transparent;  border-bottom: 8px solid #EAEAEA;"></div>
+            积分：3564 </div>
+        </span>  </li>
+    <li>排名：<span>第3800名</span></li>
+</ul>
+<ul id="blog_statistics">
+    <li>原创：<span>110篇</span></li>
+    <li>转载：<span>17篇</span></li>
+    <li>译文：<span>1篇</span></li>
+    <li>评论：<span>192条</span></li>
+</ul>
+</ul>
+</div>
+
+
+
+
+      
+<div class="panel" id="panel_Search">
+    <ul class="panel_head"><span>文章搜索</span></ul>
+    <ul class="panel_body">
+        <form id="frmSearch" action="http://so.csdn.net/search" class="form_search" target="_blank">
+        <span><input id="inputSearch" class="blogsearch" title="请输入关键字" type="text"></span>
+        <input id="btnSubmit" value="搜索" title="search in blog" type="button">
+        <input name="q" id="inputQ" type="hidden">
+        <input name="t" value="blog" type="hidden">
+        <a id="btnSearchBlog" target="_blank"></a>
+        </form>
+    </ul>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $("#btnSubmit").click(function () {           
+            search();
+        });
+
+        $("#frmSearch").submit(function () {
+            search();
+            return false;
+        });
+
+        function search()
+        {
+            var url = "http://so.csdn.net/so/search/s.do?q=" + encodeURIComponent($("#inputSearch").val()) + "&u=" + username + "&t=blog";
+            window.location.href = url;
+        }   
+    });
+</script>
+<div id="panel_Category" class="panel">
+<ul class="panel_head"><span>文章分类</span></ul>
+<ul class="panel_body">
+             <li>
+                <a href="http://blog.csdn.net/mmpire/article/category/29474" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">工作记录</a><span>(72)</span>
+            </li>
+             <li>
+                <a href="http://blog.csdn.net/mmpire/article/category/29475" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">技术文摘</a><span>(27)</span>
+            </li>
+             <li>
+                <a href="http://blog.csdn.net/mmpire/article/category/38730" onclick="_gaq.push(['_trackEvent','function', 'onclick', 'blog_articles_wenzhangfenlei']); ">课外随笔</a><span>(13)</span>
+            </li>
+</ul>
+</div><div id="panel_Archive" class="panel">
+<ul class="panel_head"><span>文章存档</span></ul>
+<ul class="panel_body">
+<div id="archive_list"><li><a href="http://blog.csdn.net/mmpire/article/month/2014/08">2014年08月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2012/04">2012年04月</a><span>(3)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2009/06">2009年06月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2009/02">2009年02月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2008/10">2008年10月</a><span>(3)</span></li><span class="hidelist" style="display:none;"><li><a href="http://blog.csdn.net/mmpire/article/month/2008/06">2008年06月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2008/05">2008年05月</a><span>(3)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2008/03">2008年03月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2007/10">2007年10月</a><span>(8)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2007/06">2007年06月</a><span>(3)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2007/03">2007年03月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2006/12">2006年12月</a><span>(2)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2006/11">2006年11月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2006/10">2006年10月</a><span>(2)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2006/09">2006年09月</a><span>(3)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2006/06">2006年06月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2006/05">2006年05月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2006/04">2006年04月</a><span>(4)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2006/03">2006年03月</a><span>(6)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2005/08">2005年08月</a><span>(3)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2005/07">2005年07月</a><span>(2)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2005/06">2005年06月</a><span>(10)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2005/05">2005年05月</a><span>(10)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2005/04">2005年04月</a><span>(10)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2005/03">2005年03月</a><span>(7)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2005/02">2005年02月</a><span>(6)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2005/01">2005年01月</a><span>(1)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2004/12">2004年12月</a><span>(4)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2004/11">2004年11月</a><span>(3)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2004/10">2004年10月</a><span>(5)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2004/09">2004年09月</a><span>(6)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2004/08">2004年08月</a><span>(7)</span></li><li><a href="http://blog.csdn.net/mmpire/article/month/2004/07">2004年07月</a><span>(8)</span></li></span><div id="archive_list_button" class="list_closed">展开</div></div>
+</ul>
+</div>
+<div id="hotarticls" class="panel">
+<ul class="panel_head">
+    <span>       
+阅读排行    </span>
+</ul>
+
+<ul class="panel_body itemlist">
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/171945" title="更改grub默认启动顺序(附grub配置向导)">更改grub默认启动顺序(附grub配置向导)</a><span>(22154)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/3117634" title="Windows 2003 Server 磁盘分区的调整及合并">Windows 2003 Server 磁盘分区的调整及合并</a><span>(11751)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/698502" title="从ACM会议看中国大陆计算机科学与国外的差距-- 灵芯">从ACM会议看中国大陆计算机科学与国外的差距-- 灵芯</a><span>(9874)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/38782095" title="微信图文消息中如何增加超链接">微信图文消息中如何增加超链接</a><span>(5976)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/4243539" title="车载无线自组织网络的介质访问控制协议研究">车载无线自组织网络的介质访问控制协议研究</a><span>(5664)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/7518450" title="当汽车遇见IT（极客之车专刊）">当汽车遇见IT（极客之车专刊）</a><span>(5203)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/87147" title="GPS系统数据输出格式">GPS系统数据输出格式</a><span>(4038)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/676361" title="简单SNMP管理程序的VC++代码实例实现">简单SNMP管理程序的VC++代码实例实现</a><span>(3638)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/2408578" title="利用IPC通道进行进程间通信（C#）">利用IPC通道进行进程间通信（C#）</a><span>(3624)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/319344" title="总结一下写linux设备驱动的过程">总结一下写linux设备驱动的过程</a><span>(3397)</span>
+</li>
+</ul>
+</div>
+<div id="hotarticls2" class="panel">
+<ul class="panel_head"><span>评论排行</span></ul>
+<ul class="panel_body itemlist">
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/4243539" title="车载无线自组织网络的介质访问控制协议研究">车载无线自组织网络的介质访问控制协议研究</a><span>(54)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/698502" title="从ACM会议看中国大陆计算机科学与国外的差距-- 灵芯">从ACM会议看中国大陆计算机科学与国外的差距-- 灵芯</a><span>(22)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/295090" title=" 直接编译driver目录下的skeleton模块"> 直接编译driver目录下的skeleton模块</a><span>(20)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/394414" title="测试SLR文法例子">测试SLR文法例子</a><span>(8)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/1640670" title="使用Microsoft CryptoAPI进行加密、解密、签名及验证(代码)">使用Microsoft CryptoAPI进行加密、解密、签名及验证(代码)</a><span>(6)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/3117634" title="Windows 2003 Server 磁盘分区的调整及合并">Windows 2003 Server 磁盘分区的调整及合并</a><span>(5)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/319344" title="总结一下写linux设备驱动的过程">总结一下写linux设备驱动的过程</a><span>(5)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/265373" title="在家上网的日子">在家上网的日子</a><span>(5)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/1637771" title="使用Microsoft CryptoAPI进行加密、解密、签名及验证">使用Microsoft CryptoAPI进行加密、解密、签名及验证</a><span>(4)</span>
+</li>
+<li>
+<a href="http://blog.csdn.net/mmpire/article/details/1432729" title="开始接触tinyOS">开始接触tinyOS</a><span>(3)</span>
+</li>
+</ul>
+</div>
+<div id="homepageArticles" class="panel tracking-ad" data-mod="popu_4">
+<ul class="panel_head"><span>推荐文章</span></ul>
+<ul class="panel_body" id="ad_commend"><iframe src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad_003.htm" style="border-width: 0px; overflow: hidden; width: 182px; height: 200px;" scrolling="no" id="ad_frm_2" frameborder="0"></iframe></ul>
+</div>
+<script type="text/javascript">
+ new Ad(12, 'ad_commend');
+</script><div id="newcomments" class="panel">
+<ul class="panel_head"><span>最新评论</span></ul>
+<ul class="panel_body itemlist">
+    <li>
+   
+         <a href="http://blog.csdn.net/mmpire/article/details/1640670#comments">使用Microsoft CryptoAPI进行加密、解密、签名及验证(代码)</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/hwn1026" class="user_name">hwn1026</a>:
+你好，能不能给看一下签名和验证的代码？！谢谢
+    </p>
+    </li>
+    <li>
+   
+         <a href="http://blog.csdn.net/mmpire/article/details/1640670#comments">使用Microsoft CryptoAPI进行加密、解密、签名及验证(代码)</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/hwn1026" class="user_name">hwn1026</a>:
+你好，能不能给看看签名和验证的代码？！非常感谢！！
+    </p>
+    </li>
+    <li>
+   
+         <a href="http://blog.csdn.net/mmpire/article/details/613130#comments">编译器是怎么被编译出来的？</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/ICUICUICUICU" class="user_name">ICUICUICUICU</a>:
+受教了  谢谢博主
+    </p>
+    </li>
+    <li>
+   
+         <a href="http://blog.csdn.net/mmpire/article/details/1432729#comments">开始接触tinyOS</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/OurRtems" class="user_name">霜月孤鸟</a>:
+清华的哥们...
+    </p>
+    </li>
+    <li>
+   
+         <a href="http://blog.csdn.net/mmpire/article/details/2408578#comments">利用IPC通道进行进程间通信（C#）</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/orange0802" class="user_name">orange0802</a>:
+我运行的时候，IpcServerChannel channel = new IpcServerCha...
+    </p>
+    </li>
+    <li>
+   
+         <a href="http://blog.csdn.net/mmpire/article/details/2408578#comments">使用Microsoft CryptoAPI进行加密、解密、签名及验证(代码)</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/YanWW1985" class="user_name">YanWW1985</a>:
+签名的代码没有啊。。。正需要这个
+    </p>
+    </li>
+    <li>
+   
+         <a href="http://blog.csdn.net/mmpire/article/details/676361#comments">简单SNMP管理程序的VC++代码实例实现</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/zhuanshenweiliu" class="user_name">jennyLiuJ</a>:
+不错啊 有帮助！
+    </p>
+    </li>
+    <li>
+   
+         <a href="http://blog.csdn.net/mmpire/article/details/346312#comments">也凑一篇关于FTP服务器vsftpd的文章</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/oracle_1010" class="user_name">oracle_1010</a>:
+看了好多上面第一条命令就是rpm -qa | grep vsftpd 但我用的是ubuntu-11....
+    </p>
+    </li>
+    <li>
+   
+         <a href="http://blog.csdn.net/mmpire/article/details/4243539#comments">车载无线自组织网络的介质访问控制协议研究</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/hwb_lxtx1" class="user_name">hwb_lxtx1</a>:
+楼主，你好！同楼下的问题一样，你的文章我看了觉得写得很不错，不过显示不了图片，所以想找你拿下你的原文...
+    </p>
+    </li>
+    <li>
+   
+         <a href="http://blog.csdn.net/mmpire/article/details/4243539#comments">车载无线自组织网络的介质访问控制协议研究</a>
+    <p style="margin:0px;"><a href="http://blog.csdn.net/cjjiwei" class="user_name">cjjiwei</a>:
+楼主，你好！你的文章对我很有意义，想借鉴下，不过显示不了图片，所以想找你拿下你的原文，PDF就可以了...
+    </p>
+    </li>
+</ul>
+</div>
+
+
+<div id="custom_column_943857" class="panel">
+<ul class="panel_head"><span>here and there</span></ul>
+<ul class="panel_body">
+<ul><li><a href="http://www.yyfree.com/" target="_blank">嘎雅音乐</a></li><li><a href="http://www.blogcn.com/User12/msmouse/index.html" target="_blank">msmouse</a> (<a href="http://www.blogcn.com/rss.asp?blog=msmouse" target="_blank">RSS</a>)</li><li><a href="http://xujian007.spaces.live.com/" target="_blank">徐坚--挤海绵</a></li><li><a href="http://blog.csdn.net/knowBot" target="_blank">皮皮--KnowBot</a></li><li><a href="http://www.nyzgay.com/" target="_blank">表弟的狗</a></li><li><a href="http://blog.csdn.net/qinmaofan" target="_blank">藩的博客</a></li></ul>
+</ul>
+</div>    </div>
+    <div class="clear">
+    </div>
+</div>
+
+            <div class="clear">
+            </div>
+        </div>
+        
+
+<script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/cnick.js"></script>
+<script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/newblog.js"></script>
+
+
+<script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/showblogmedal.js"></script>
+<script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/JavaScript1.js"></script><link rel="stylesheet" type="text/css" href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/pub_footer_2014.css"><div class="pub_fo"><div id="pub_footerall" class="pub_footer_new"><dl><dt></dt> <dd class="foot_sub_menu"><a href="http://www.csdn.net/company/about.html" target="_blank">公司简介</a><span>|</span><a href="http://www.csdn.net/company/recruit.html" target="_blank">招贤纳士</a><span>|</span><a href="http://www.csdn.net/company/marketing.html" target="_blank">广告服务</a><span>|</span><a href="http://www.csdn.net/company/account.html" target="_blank">银行汇款帐号</a><span>|</span><a href="http://www.csdn.net/company/contact.html" target="_blank">联系方式</a><span>|</span><a href="http://www.csdn.net/company/statement.html" target="_blank">版权声明</a><span>|</span><a href="http://www.csdn.net/company/layer.html" target="_blank">法律顾问</a><span>|</span><a href="mailto:webmaster@csdn.net">问题报告</a><span>|</span><a target="_blank" href="http://www.csdn.net/friendlink.html">合作伙伴</a><span>|</span><a href="http://bbs.csdn.net/forums/Service" target="_blank">论坛反馈</a></dd><dd class="foot_contact"><a href="http://wpa.qq.com/msgrd?v=3&amp;uin=2355263776&amp;site=qq&amp;menu=yes" target="_blank" class="qq">网站客服</a><a href="http://wpa.qq.com/msgrd?v=3&amp;uin=2251809102&amp;site=qq&amp;menu=yes" target="_blank" class="qq">杂志客服</a><a href="http://e.weibo.com/csdnsupport/profile" target="_blank" class="weibo">微博客服</a><a href="mailto:webmaster@csdn.net" class="email" title="联系邮箱">webmaster@csdn.net</a><span class="phone" title="服务热线">400-600-2320</span><span class="interval">|</span><span>北京创新乐知信息技术有限公司 版权所有</span><span class="interval">|</span><span>江苏乐知网络技术有限公司 提供商务支持</span></dd><dd class="foot_copyright"><span>京&nbsp;ICP&nbsp;证&nbsp;070598&nbsp;号</span><span class="interval">|</span><span>Copyright © 1999-2014, CSDN.NET, All Rights Reserved&nbsp;</span><a href="http://www.hd315.gov.cn/beian/view.asp?bianhao=010202001032100010" target="_blank"><img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/gongshang_logos.gif" alt="GongshangLogo" title=""></a></dd></dl></div></div><div id="note1" class="csdn_note" style="display:none; position:absolute; z-index:9999; width:440px">  <span class="notice_top_arrow"><span class="inner"></span></span>  <div class="box"></div></div><div class="csdn_notice_tip" style="display:none; position:absolute; z-index:9990; width:170px">  <iframe src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/a_002.htm" scrolling="no" style="z-index:-1;position:absolute;top:0;left:0;width:100%;height:100%;background:transparent" frameborder="0"></iframe>  <div class="tip_text">您有<strong>0</strong>条新通知</div>  <a href="javascript:void%200" class="close2"></a></div><script id="noticeScript" type="text/javascript" btnid="header_notice_num" wrapid="note1" count="5" subcount="5" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/notify.js"></script>
+
+    <script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/login.js"></script>
+<script type="text/javascript">document.write("<img src=http://counter.csdn.net/pv.aspx?id=24 border=0 width=0 height=0>");</script><img src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/pv.xml" border="0" height="0" width="0">
+<script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/counter.js"></script><script type="text/javascript" charset="UTF-8" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/msg.js"></script>
+<script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad-blog.js"></script><script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ad-ms1284.js"></script>
+
+<script type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/count.js"></script><iframe src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/logs.htm" frameborder="0" height="0" width="0"></iframe>
+<script type="text/javascript">
+    $(function () {
+        function __get_code_toolbar(snippet_id) {
+            return $("<a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "' target='_blank' title='在CODE上查看代码片' style='text-indent:0;'><img src='https://code.csdn.net/assets/CODE_ico.png' width=12 height=12 alt='在CODE上查看代码片' style='position:relative;top:1px;left:2px;'/></a>"
+                    + "<a href='https://code.csdn.net/snippets/"
+                    + snippet_id
+                    + "/fork' target='_blank' title='派生到我的代码片'  style='text-indent:0;'><img src='https://code.csdn.net/assets/ico_fork.svg' width=12 height=12 alt='派生到我的代码片' style='position:relative;top:2px;left:2px;'/></a>");
+        }
+        
+        $("[code_snippet_id]").each(function () {
+            __s_id = $(this).attr("code_snippet_id");
+            if (__s_id != null && __s_id != "" && __s_id != 0 && parseInt(__s_id) > 70020) {
+                __code_tool = __get_code_toolbar(__s_id);
+                $(this).prev().find(".tools").append(__code_tool);
+            }
+        });
+    });
+</script>
+
+    </div><input id="aa_g_data_ids" type="hidden">
+      <!--new top-->
+    
+    <script id="csdn-toolbar-id" btnid="header_notice_num" wrapid="note1" count="5" subcount="5" type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/toolbar.js"></script>
+     <!--new top-->
+   
+    <link href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ask_float_block.css" type="text/css" rel="stylesheet">
+    <script language="JavaScript" type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/wmd.js"></script>
+    <script language="JavaScript" type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/showdown.js"></script>
+    <script language="JavaScript" type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/prettify.js"></script>
+    <script language="JavaScript" type="text/javascript" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ask_float_block.js"></script>
+
+
+
+<div style="display: block;" id="tag-suggest-pop">
+  <div class="relative">
+    <div class="close"></div>
+    <div class="content"><div><span>更多相关资源：</span><a href="http://www.csdn.net/tag/%E9%80%9A%E4%BF%A1" title="关于 通信 的主题" target="_blank">通信</a><a href="http://www.csdn.net/tag/ipc" title="关于 ipc 的主题" target="_blank">ipc</a><a href="http://www.csdn.net/tag/c%23" title="关于 c# 的主题" target="_blank">c#</a></div></div>
+  </div>
+</div><link rel="stylesheet" type="text/css" media="screen" href="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/ask_float_fonts_css-6b30a53970eb5c3a2a045e3df585b475.css"><div data-mod="popu_64" class="tracking-ad" chg-blk="0"><a id="com-ask-float-block" title="提问按钮" style="top:329px"></a><a id="com-quick-reply" title="快速回复" style="top:370px"></a><a id="com-d-top-a" style="top: 411px; display: none;" title="返回顶部" onclick=""></a> </div><div class="pop_edit ask_second comm_ask_second"><h3>提问</h3><span class="ask_float_span">您的问题将会被发布在“<a class="ask_float_channel" href="http://ask.csdn.net/" target="_blank" style="cursor:pointer">技术问答</a>”频道</span><a href="#" nodetype="close" class="close">×</a><div class="context"><div class="err_div"><span class="err_ico"></span><span class="err_txt">该问题已存在，请勿重复提问</span></div><div class="input_div"><input id="askInputSecond" style="font-size:14px;" placeholder="问题标题" type="text"></div><div class="cm_box"><div class="cm_dialog"></div> <div class="pop_cm cm_add_link"><input placeholder="链接内容" id="af_cm_link_txt" type="text"><input placeholder="链接地址" id="af_cm_link_url" type="text"><input placeholder="链接提示" id="af_cm_link_tit" type="text"><div class="text-right"><span class="btn btn-default btn-sm" id="add_link_btn">插入链接</span> </div> </div><div class="pop_cm cm_add_img"><div class="nav-tabs"><a class="img_tab active" href="#tab_upload">本地上传</a><a class="img_tab" href="#tab_weburl">网络图片</a></div><div class="tab_panel active" id="tab_upload"><div class="set_img"><iframe src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/upload.htm"></iframe></div></div><div class="tab_panel" id="tab_weburl"><input placeholder="图片地址" id="af_cm_img_url" type="text"><input placeholder="图片说明" id="af_cm_img_alt" type="text"><div class="text-right"><span class="btn btn-default btn-sm" id="add_img_btn">插入图片</span> </div></div> </div></div> <textarea style="display: none;" id="editor_all" rows="8"></textarea><div class="editor-toolbar"><i class="separator">|</i><a title="标题一（Ctrl+Alt+1）" class="icon-headline"></a><a title="标题二（Ctrl+Alt+2）" class="icon-heading"></a><a title="粗体（Ctrl+B）" class="icon-bold"></a><a title="斜体（Ctrl+I）" class="icon-italic"></a><i class="separator">|</i><a title="引用（Ctrl+’）" class="icon-quote-left"></a><a title="插入代码片（Ctrl+,）" class="icon-code"></a><a title="无序列表（Ctrl+L）" class="icon-list-ul"></a><a title="有序列表（Ctrl+Alt+L）" class="icon-list-ol"></a><i class="separator">|</i><a title="添加链接（Ctrl+K）" class="icon-link"></a><a title="添加图片（Ctrl+Alt+I）" class="icon-picture"></a><i class="separator">|</i><a title="撤退（Ctrl+Z）" class="icon-reply"></a><a title="前进（Ctrl+Shift+Z）" class="icon-share-alt"></a><i class="separator">|</i><a title="markdown语法参考" target="_blank" href="http://ask.csdn.net/pages/markdown" class="icon-info"></a><a title="预览" class="icon-preview"></a><i class="separator">|</i></div><div class="CodeMirror cm-s-paper CodeMirror-focused"><div style="overflow: hidden; position: relative; width: 3px; height: 0px;"><textarea tabindex="0" spellcheck="false" autocapitalize="off" autocorrect="off" style="position: absolute; padding: 0px; width: 1px; height: 1em; outline: medium none; font-size: 4px;" wrap="off"></textarea></div><div class="CodeMirror-hscrollbar"><div style="height: 1px;"></div></div><div class="CodeMirror-vscrollbar"><div style="width: 1px;"></div></div><div class="CodeMirror-scrollbar-filler"></div><div class="CodeMirror-gutter-filler"></div><div draggable="true" tabindex="-1" class="CodeMirror-scroll"><div style="min-width: 33px;" class="CodeMirror-sizer"><div style="position: relative;"><div class="CodeMirror-lines"><div style="position: relative; outline: medium none;"><div class="CodeMirror-measure"><pre>&nbsp;<span style="display: inline-block; width: 1px; margin-right: -1px;">&nbsp;</span></pre></div><div style="position: relative; z-index: 1;"></div><div class="CodeMirror-code"></div><div style="visibility: hidden;" class="CodeMirror-cursor">&nbsp;</div><div style="visibility: hidden;" class="CodeMirror-cursor CodeMirror-secondarycursor">&nbsp;</div></div></div></div></div><div style="position: absolute; height: 30px; width: 1px;"></div><div style="display: none;" class="CodeMirror-gutters"></div></div></div><div class="editor-statusbar"><span class="lines">0</span><span class="words">0</span><span class="cursor">0:0</span></div><div class="div_tags clearfix"><div id="divSearchTags" class="tags_con"><input type="text"></div><input name="txtSearchTags" type="hidden"></div><div id="ask2_tagRecomm_div" class="drt_tagRecomm tracking-ad" data-mod="popu_73"><span class="drt_tit">推荐标签：</span></div></div><div class="success"><div class="left_area"><input id="chk_cb" type="checkbox"><span class="wyxs">我要悬赏</span><input id="cb_num" class="cb_num" readonly="true"><span class="phib_rii"><span> 币</span></span></div><a href="#" nodetype="cancel" class="cancel">取消</a><a href="#" nodetype="ok" class="ok">发布</a></div></div><div id="common_ask_div_sc" class="searchContainer"><div class="sTitle">可能存在类似的问题：</div><div class="sFooter"><a class="sFirstNewAsk">我想提一个新问题</a></div></div><style id="xnSmartBarCacheCSSID" type="text/css">
+
+.baiduServiceBottomBar.noDis{display:none !important}.baiduServiceBottomBar.iphoneDevice>ul>li .count{font-size:10px;line-height:12px;height:12px;padding:0px 2px;top:-3px;right:-8px;box-sizing:border-box;font-family:Arial, Helvetica, sans-serif;text-shadow:none;outline:none}.baiduServiceBottomBar.hackIFrame iframe{top:0px;-webkit-transform:translateZ(5px);transform:translateZ(5px)}.baiduServiceBottomBar{overflow:visible;line-height:1;border-top:1px solid #c0c0c0;position:fixed;z-index:200;width:100%;bottom:0px;background-color:rgba(242,242,242,0.94);background-image:-moz-linear-gradient(rgba(248,248,248,0.94), rgba(242,242,242,0.94));background-image:-o-linear-gradient(rgba(248,248,248,0.94), rgba(242,242,242,0.94));background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, rgba(248,248,248,0.94)), color-stop(1, rgba(242,242,242,0.94)));background-image:-webkit-linear-gradient(rgba(248,248,248,0.94), rgba(242,242,242,0.94));background-image:-ms-linear-gradient(rgba(248,248,248,0.94), rgba(242,242,242,0.94));background-image:linear-gradient(rgba(248,248,248,0.94), rgba(242,242,242,0.94))}.baiduServiceBottomBar div{overflow:visible}.baiduServiceBottomBar div,.baiduServiceBottomBar span,.baiduServiceBottomBar object,.baiduServiceBottomBar iframe,.baiduServiceBottomBar h1,.baiduServiceBottomBar h2,.baiduServiceBottomBar h3,.baiduServiceBottomBar h4,.baiduServiceBottomBar h5,.baiduServiceBottomBar h6,.baiduServiceBottomBar p,.baiduServiceBottomBar a,.baiduServiceBottomBar em,.baiduServiceBottomBar img,.baiduServiceBottomBar b,.baiduServiceBottomBar i,.baiduServiceBottomBar dl,.baiduServiceBottomBar dt,.baiduServiceBottomBar dd,.baiduServiceBottomBar ol,.baiduServiceBottomBar ul,.baiduServiceBottomBar li,.baiduServiceBottomBar fieldset,.baiduServiceBottomBar form,.baiduServiceBottomBar label,.baiduServiceBottomBar table,.baiduServiceBottomBar caption,.baiduServiceBottomBar tbody,.baiduServiceBottomBar tfoot,.baiduServiceBottomBar thead,.baiduServiceBottomBar tr,.baiduServiceBottomBar th,.baiduServiceBottomBar td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline}.baiduServiceBottomBar p,.baiduServiceBottomBar div,.baiduServiceBottomBar h1,.baiduServiceBottomBar h2,.baiduServiceBottomBar h3,.baiduServiceBottomBar h4,.baiduServiceBottomBar h5,.baiduServiceBottomBar h6{-webkit-text-size-adjust:none}.baiduServiceBottomBar ul,.baiduServiceBottomBar li,.baiduServiceBottomBar a{vertical-align:middle}.baiduServiceBottomBar ol,.baiduServiceBottomBar ul{list-style:none;overflow:visible}.baiduServiceBottomBar .qingIcon{width:22px;height:22px;background-image:url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACQAAAAqCAMAAADs1AnaAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA4BpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1YTA3ZWU4Yy0yNTUzLTQzOTktOTliMC0wYTYxYzc3NjY1ZGYiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6QzI1MDJCODkzOENGMTFFNDg2NjdDNzU2MzQwOTc2NzUiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6QzI1MDJCODgzOENGMTFFNDg2NjdDNzU2MzQwOTc2NzUiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4YzRhMmIzNy03ODM4LTQyZTMtODI4Yy1lYjc1OTQyNjQwZWQiIHN0UmVmOmRvY3VtZW50SUQ9ImFkb2JlOmRvY2lkOnBob3Rvc2hvcDoyOGIzNTdlNi03NTM5LTExNzctODViNy1hYTQ4NGY2ZjI2ZWIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4Wt27tAAABmFBMVEXvX2pvs+r/+/vnECDlAhP0kpnwZ3EOcM383uBkRIPmCBj96+z+9fb6z9L4vMDpKznoHCvyfIX2p6397O360NPtUl7rPUrmBxjrPkv83+H2pqz4vsL2qK7lARLnDx/sQE3oHSzyfoftU17ye4TwaHIBeNn+9PXnESHoGyqJh7ZYY6Wq0vNRZan7+fsQcc36ztEHdNQZhd5+u+zc7PrW6fnvZW/4+/7pKDZsVY+1GTsOcs/0lZxhcrB3t+shasH96erv9/34ub5DZK1PouVgca/qM0EOcs7pKjjhAhTp4utmXZr//PwGe9sMftwDetrnFybKvtTpLDrrO0joGSgvkeHtUFzLv9QXhN36zdDpIzLgAxb6+PvlAxS+FzaGv+3H4fddqecCd9hGneTA3vYUg93tUV0Dd9hWS47QCyPoIjGYyPDvXmk9ZbH0k5qv1fN7OG5iVZRVpebrOkegzfH1+v4MctDl8fsIfNshid+MiLXy+P3VCB/n4euslrj8/f+ISHnqLTv0j5Y2leLoITDg7/sAeNrlABH///9RYd6zAAAAiHRSTlP///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////8AGLfWDwAAAZZJREFUeNrc1FV7wjAUBuDiDIr7cDbm7u7u7u7u7kb422spPU0F2PW+qyZ5nz5N0nOIuCD2/nqDcI7gD225SoSUan0aJFcpUCIKlTwVMpoQxGSURFoH4sWhFSHSokOC6CwkH1nNsPa9CI9mK4YMTpinPnm4OZ8dNRbNJZFerWQnk5u3qf306GA/GttsGaQQbJuKE46x/Aotnd/G6PQ9lhLctkM+/Gxe22JsSgjYS5jESM0WkLL3ARZFPBjpkI2xZO/iGSEGHXox8na0A685WaWXGYRfzvYMkIez5LIA/VwCGV2ri0uhm6p7MBt39DGKUfE8kK915kLESMaSymv2alOikdaneCbUXY39bqkQ78f9D+j4LyjQKY28wXEOITSrFSNPBKGVXheHkCsnj4/IMFOuig9ETEMhFGTjyBeChSCvpIYA2d0wGfiU84ozK4kSXYqJv7ZdUOYMkp9CmaOpBVHDSKCKSewrJVpPAmnw/Uo0MR7a1Uq3wwYOpWiHVJYLmxiUprFSeemJajK0aDoTXW67cO5XgAEAv5+0kJ0BN/wAAAAASUVORK5CYII=");margin:10px auto;background-size:100% 100%}.baiduServiceBottomBar .qingBtn{width:48px;height:48px;background-color:#f8f8f8;border:1px solid #ddd}.baiduServiceBottomBar .qingIcon,.baiduServiceBottomBar .qingBtn{display:block}.baiduServiceBottomBar *{vertical-align:middle;box-sizing:border-box}.baiduServiceBottomBar .baidu-xn-pop-parent{position:relative}.baiduServiceBottomBar .baidu-xn-pop-container{position:absolute;bottom:100%;display:none;z-index:-90;width:113%;background-color:rgba(255,255,255,0.94);background-image:-moz-linear-gradient(rgba(255,255,255,0.94), rgba(255,255,255,0.94));background-image:-o-linear-gradient(rgba(255,255,255,0.94), rgba(255,255,255,0.94));background-image:-webkit-gradient(linear, left top, left bottom, color-stop(0, rgba(255,255,255,0.94)), color-stop(1, rgba(255,255,255,0.94)));background-image:-webkit-linear-gradient(rgba(255,255,255,0.94), rgba(255,255,255,0.94));background-image:-ms-linear-gradient(rgba(255,255,255,0.94), rgba(255,255,255,0.94));background-image:linear-gradient(rgba(255,255,255,0.94), rgba(255,255,255,0.94));left:initial !important;margin-left:-7px;border:1px solid #c0c0c0;border-radius:2px;box-shadow:0px 0px 4px 1px rgba(0,0,0,0.12);margin-bottom:12px;-webkit-transform:scale(1)}.baiduServiceBottomBar .baidu-xn-pop-container ul,.baiduServiceBottomBar .baidu-xn-pop-container li{list-style:none}.baiduServiceBottomBar .baidu-xn-pop-container ul{padding:0px 9px;height:auto}.baiduServiceBottomBar .baidu-xn-pop-container ul>li:not(:last-of-type){border-bottom:1px solid #dddddd}.baiduServiceBottomBar .baidu-xn-pop-container li.vote{height:43px}.baiduServiceBottomBar .baidu-xn-pop-container ul>li{height:36px}.baiduServiceBottomBar .baidu-xn-pop-container ul>li a{padding:1px 0;font-size:14px}.baiduServiceBottomBar .baidu-xn-pop-container.show,.baiduServiceBottomBar .show>.baidu-xn-pop-container{display:block;z-index:-90}.baiduServiceBottomBar .noDis{display:none !important}.baiduServiceBottomBar a{text-decoration:none;color:#001526}.baiduServiceBottomBar>ul{display:-webkit-box;display:-ms-flexbox;display:-moz-box;display:box;width:100%;list-style-type:none;padding:0px;margin:0px;-webkit-box-pack:center;-webkit-box-align:center;box-pack:center;box-align:center;border:0 #fafafb solid;border-width:1px 0 0 1px}.baiduServiceBottomBar>ul>li{display:block;width:3em;-webkit-box-flex:1;flex:1;-ms-flex:1;-moz-box-flex:1;text-align:center;font-size:10px}.baiduServiceBottomBar>ul>li a{font-size:16px;padding:6px 0px 4px;display:inline-block;display:inline-block;width:100%;line-height:34px;height:43px;text-align:center}.baiduServiceBottomBar>ul>li a p>span.text-char{text-shadow:0 1px #fff}.baiduServiceBottomBar>ul>li .icon{width:18px;height:18px;display:block;margin:0px auto 4px;background-size:100% 100%;vertical-align:middle;position:relative}.baiduServiceBottomBar>ul>li .count-outer{position:relative;width:auto;display:inline-block;line-height:inherit}.baiduServiceBottomBar>ul>li .count{background-color:#f43b3b;color:#fff;border-radius:1px;padding:0px 2px;position:absolute;font-size:10px;line-height:12px;height:12px;top:-3px;right:-10px;font-style:normal;text-shadow:none;outline:none}.baiduServiceBottomBar>ul>li .baidu-xn-pop-container .count{top:3px}.baiduServiceBottomBar>ul li.showMoreBtn{display:none;position:relative}.baiduServiceBottomBar>ul .comment .count{right:-9px}.baiduServiceBottomBar>ul .pop-tip{-webkit-transform:rotateZ(45deg);transform:rotateZ(45deg);width:6px;height:6px;z-index:300;top:-15px;left:-55%;position:absolute;border:1px solid #c0c0c0;background-color:rgba(255,255,255,0.94);display:none}.baiduServiceBottomBar>ul .pop-tip.align-right{margin-left:100%;border-left:0px;border-top:0px}@media only screen and (max-width: 400px){.baiduServiceBottomBar .show-more-buttons>li:nth-of-type(n+4),.baiduServiceBottomBar .show-more-buttons-lg>li:nth-of-type(n+4){display:none}.baiduServiceBottomBar .show-more-buttons>li.showMoreBtn,.baiduServiceBottomBar .show-more-buttons-lg>li.showMoreBtn{display:block}}@media only screen and (min-width: 400px) and (max-width: 480px){.baiduServiceBottomBar .show-more-buttons-lg>li:nth-of-type(n+5){display:none}.baiduServiceBottomBar .show-more-buttons-lg>li.showMoreBtn{display:block}}@media only screen and (max-device-width: 600px){.baiduServiceBottomBar #mobile-phone-detector{display:block}}.baiduServiceBottomBar [data-action=ecomBottomBar-vote]{position:relative}.baiduServiceBottomBar [data-action=ecomBottomBar-vote] .bd_vote{position:absolute;z-index:1;height:100%;width:100%;top:0px}.baiduServiceBottomBar [data-action=ecomBottomBar-vote] .text-char{display:inline-block;-webkit-transform:translateZ(0px);transform:translateZ(0px)}.baiduServiceBottomBar [data-action=ecomBottomBar-vote] .bd_vote iframe{position:relative}.baiduServiceBottomBar>ul>li:last-of-type .baidu-xn-pop-container{right:10px}.baiduServiceBottomBar>ul>li:first-of-type .baidu-xn-pop-container{left:8px !important;margin-left:0px}.baiduServiceBottomBar .baidu-xn-pop-parent:after{position:absolute;top:0px;left:50%;width:12px;height:3px;-webkit-box-sizing:border-box;box-sizing:border-box;border:1px solid #c0c0c0;border-left:0px;border-right:0px;margin:6px 0px 6px -6px;content:""}.baiduServiceBottomBar .qingBtn{display:none}.baiduServiceBottomBar.showQingIconStyle.hideContent{border-top:transparent;width:auto}.baiduServiceBottomBar.showQingIconStyle.hideContent .qingBtn{display:block}.baiduServiceBottomBar.showQingIconStyle.hideContent .icon-container{display:none}.baiduServiceBottomBar.showQingIconStyle{display:-webkit-box;display:-ms-flexbox;display:-moz-box;-webkit-box-pack:center;-webkit-box-align:center;box-pack:center;box-align:center}.baiduServiceBottomBar.showQingIconStyle .qingBtn{display:block}.baiduServiceBottomBar.showQingIconStyle>ul>li:first-of-type .baidu-xn-pop-container{left:initial !important;margin-left:-10%}.baiduServiceBottomBar.showQingIconStyle [data-action=ecomBottomBar-showMore]{max-width:50px}.baiduServiceBottomBar.showQingIconStyle [data-action=ecomBottomBar-showMore] .baidu-xn-pop-container{width:180%}.baiduServiceBottomBar.showQingIconStyle [data-action=ecomBottomBar-showMore] .pop-tip.align-right{margin-left:120%}.baiduServiceBottomBar.showQingIconStyle.showContent{width:100%}.baiduServiceBottomBar.showQingIconStyle.showContent .qingBtn{border:1px solid transparent;border-right:1px solid #cdcdcd}.baiduServiceBottomBar.showQingIconStyle.showContent .qingIcon{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoV2luZG93cykiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6NjRENkJCMzY0NkJGMTFFNEI4NTc5NjE5QjFBMjJERTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6NjRENkJCMzc0NkJGMTFFNEI4NTc5NjE5QjFBMjJERTQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo2NEQ2QkIzNDQ2QkYxMUU0Qjg1Nzk2MTlCMUEyMkRFNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo2NEQ2QkIzNTQ2QkYxMUU0Qjg1Nzk2MTlCMUEyMkRFNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PgNHqQMAAAA8UExURdLS0tzc3Onp6fj4+ExMTHt7e2xsbNXV1fz8/Hl5ef39/dTU1E1NTfn5+ejo6Nra2tPT0z8/PzMzM////3wYFWQAAAAUdFJOU/////////////////////////8AT0/nEQAAAT5JREFUeNrMl9sSgjAMRLcFRFFu6f//q1ekjLRJ3XHGvtI9QLpJEwRy4W8A3nUlss75DaBqRC6tXd9eRJp+BfQHua15suqn+b7/UL0BJ5ESwlMvcloAXqSEsOhF/AvgpISw6sW9AMe6gBDp6+MSg/NsJkT6+bwe42QlxBsRG8lI+NS/nWgi7OjXXDAQ9vRRMqmEXX2cjQphX79J5ywh9RDBRkg+gm1bGg3TizKfBsuv5oIDQ7CywUVQCfnjRdAIij2gWG7SDArNtJrBoaWNlmIIRkIqRRFshGSRQDAR0kUGlvKVK3O/A7C/wAaRPUbWSKyV2WRi05ktKGxJY4sqW9bZi4W92tjLlb3e2QaDbXHYJott89hGk2116WabbvfpgYMeeULFDl2Psa8uHfuqjROHsWzwHIe/m52/XlcBBgCFdCWM9zfnWwAAAABJRU5ErkJggg==)}.baiduServiceBottomBar.showQingIconStyle.showContent .icon-container{display:-webkit-box;display:-ms-flexbox;display:-moz-box;dislay:box;-webkit-box-flex:1;flex:1;-ms-flex:1;-moz-box-flex:1}.baiduServiceBottomBar.double-scale>ul>li a{line-height:68px;height:86px;font-size:32px;padding:12px 0 4px}.baiduServiceBottomBar.double-scale>ul>li .baidu-xn-pop-container{width:113%}.baiduServiceBottomBar.double-scale>ul>li .baidu-xn-pop-container ul{padding:0px 18px}.baiduServiceBottomBar.double-scale>ul>li .baidu-xn-pop-container ul>li{height:72px;line-height:60px;width:100%}.baiduServiceBottomBar.double-scale>ul>li .baidu-xn-pop-container ul>li a{padding:0px;line-height:72px;height:72px}.baiduServiceBottomBar.double-scale>ul>li .count{font-size:20px;line-height:20px;height:20px;padding:0 6px;top:6px;right:-20px;text-shadow:none;outline:none;border-radius:4px}.baiduServiceBottomBar.double-scale .baidu-xn-pop-parent:after{width:24px;height:6px;margin:12px 0 12px -12px;content:""}@media only screen and (max-width: 800px){.baiduServiceBottomBar.double-scale .show-more-buttons>li:nth-of-type(n+4),.baiduServiceBottomBar.double-scale .show-more-buttons-lg>li:nth-of-type(n+4){display:none}.baiduServiceBottomBar.double-scale .show-more-buttons>li.showMoreBtn,.baiduServiceBottomBar.double-scale .show-more-buttons-lg>li.showMoreBtn{display:block}}@media only screen and (min-width: 800px) and (max-width: 960px){.baiduServiceBottomBar.double-scale .show-more-buttons-lg>li:nth-of-type(n+5){display:none}.baiduServiceBottomBar.double-scale .show-more-buttons-lg>li.showMoreBtn{display:block}}.smb-user-guide-wrapper{position:fixed;z-index:9999;background:rgba(15,15,15,0.8);top:83px;width:238px;height:195px;left:50%;margin-left:-119px;border-radius:10px;font-size:14px;font-family:sans-serif}.smb-user-guide-wrapper .bg-pic{margin-top:24px;height:131px;background:url(http://m.baidu.com/static/search/siteapp/lego/use_guide.png) center no-repeat;background-size:208px 131px}.smb-user-guide-wrapper .queryX{position:absolute;left:44px;top:90px}.smb-user-guide-wrapper .closeX{display:block;margin:8px auto;color:#fff;width:110px;height:25px;line-height:25px;text-align:center}.baiduServiceBottomBar-toast-container{position:fixed;z-index:99999999;width:100%;bottom:50px;text-align:center}.baiduServiceBottomBar-toast-container .toast-text{min-width:40%;max-width:80%;overflow:hidden;word-break:break-all;word-wrap:nowrap;text-overflow:ellipsis;background-color:rgba(0,0,0,0.75);opacity:0;-webkit-transition:opacity 2s linear 0s;border-radius:5px;color:#fff;padding:10px;margin:0px auto;font-size:16px}.baiduServiceBottomBar-toast-container.show .toast-text{opacity:1}.baiduServiceBottomBar-toast-container.noDis{display:none !important}body,html{padding:0px;margin:0px}
+
+/**
+ * 用于将 css 以内联 js 的形式插入到页面中去
+ */
+</style><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/getcuid" charset="utf-8" type="text/javascript"></script><div class="baiduServiceBottomBar noDis"><a class="qingBtn" data-action="ecomBottomBar-iconBtn" onclick="javascript:void(0);"><i class="qingIcon"></i></a><ul class="showCount-3 icon-container"><li><a data-action="ecomBottomBar-comment" onclick="javascript:void(0);" class="hackTJMark"><p class="count-outer"><span class="text-char">评价</span><span style="right: 0px;" class="count">21</span></p></a></li><li><a data-action="qingBottomBarShare" onclick="javascript:void(0);"><p class="count-outer"><span class="text-char">分享</span><span class="count noDis"></span></p></a></li><li><a data-action="ecomBottomBar-vote" onclick="javascript:void(0);"><p class="count-outer"><span class="text-char">赞</span><span style="right: 0px;" class="count">219</span></p><div data-inited="1" class="bd_vote"><iframe id="vote142910760277633" style="border: medium none; width: 100%; height: 100%; display: block;" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/like.htm"></iframe></div></a></li><li class="showMoreBtn baidu-xn-pop-parent" data-action="ecomBottomBar-showMore"><a onclick="javascript:void(0);">更多</a><div class="noDis"><div class="baidu-xn-pop-container"><div class="pop-content"><ul></ul></div></div><div class="pop-tip align-right"></div></div></li></ul><!-- hack form mobile phone detect --><span id="mobile-phone-detector"></span></div><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_088" charset="utf-8" type="text/javascript"></script><script async="" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/vote.js" charset="utf-8" type="text/javascript"></script><iframe src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/log.swf" style="width: 1px; height: 1px; position: absolute; visibility: hidden;"></iframe><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_004" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_056" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_081" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_002" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_046" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_086" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_054" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_017" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_016" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_099" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_012" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_022" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_059" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_014" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_043" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_096" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_007" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_026" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_028" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_048" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_061" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_098" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_039" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_087" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_104" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_023" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_045" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_024" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_080" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_072" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_083" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_062" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_076" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_038" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_073" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_021" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_032" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_115" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_093" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_057" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_035" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_037" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_013" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_070" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_050" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_052" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_055" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_079" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_102" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_114" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_111" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_094" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_110" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_112" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_029" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_018" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_047" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_068" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_025" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_097" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_109" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_027" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_103" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_010" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_071" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_084" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_060" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_077" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_105" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_095" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_108" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_069" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_031" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_030" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_058" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_003" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_033" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_064" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_049" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_006" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_065" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_063" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_074" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_015" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_044" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_008" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_019" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_078" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_020" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_091" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_117" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_036" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_067" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_005" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_106" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_034" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_053" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_101" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_085" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_011" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_089" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_090" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_040" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_113" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_009" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_042" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_116" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_100" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_041" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_075" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_082" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_092" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_066" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_107" charset="utf-8" type="text/javascript"></script><script defer="defer" src="%E5%88%A9%E7%94%A8IPC%E9%80%9A%E9%81%93%E8%BF%9B%E8%A1%8C%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1%EF%BC%88C%23%EF%BC%89%20-%20mmpire%E4%B9%8Bblog%20-%20%E5%8D%9A%E5%AE%A2%E9%A2%91%E9%81%93%20-%20CSDN.NET_files/info_051" charset="utf-8" type="text/javascript"></script></body></html>

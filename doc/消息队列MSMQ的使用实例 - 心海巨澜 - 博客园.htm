@@ -1,0 +1,575 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="zh-cn"><head><script src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/analytics.js" async=""></script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>消息队列MSMQ的使用实例 - 心海巨澜 - 博客园</title>
+<link type="text/css" rel="stylesheet" href="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/bundle-Cogitation.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/xinhaijulan/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/xinhaijulan/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/xinhaijulan/wlwmanifest.xml">
+<script src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/encoder.js" type="text/javascript"></script><script src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/gpt.js" type="text/javascript" async=""></script><script src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/jquery.js" type="text/javascript"></script>  
+<script type="text/javascript">var currentBlogApp = 'xinhaijulan', cb_enable_mathjax=false;</script>
+<script src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/blog-common.js" type="text/javascript"></script>
+<script src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/b5m.js" charset="utf-8" id="b5mmain" type="text/javascript"></script><script src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/pubads_impl_58.js" type="text/javascript" async=""></script><script src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/osd.js" type="text/javascript"></script></head>
+<body>
+<a name="top"></a>
+
+<div id="top">
+	
+<div>
+	<table>
+		<tbody><tr>
+			<td class="HeaderTitles">
+				<h1 class="HeaderTitle"><a id="Header1_HeaderTitle" class="HeaderMainTitle" href="http://www.cnblogs.com/xinhaijulan/">心海巨澜</a></h1>
+				<p id="tagline">天行键，君子以自强不息；地势坤，君子以厚德载物！</p>
+			</td>
+		</tr>
+	</tbody></table>
+</div>
+<div class="HeaderBar">
+	<table id="HeaderBar" class="HeaderBar" cellpadding="0" cellspacing="0">
+		<tbody><tr>
+			<td class="HeaderBarTab" nowrap="nowrap">
+&nbsp;
+<a id="Header1_MyLinks1_HomeLink" href="http://www.cnblogs.com/">博客园</a> ::
+<a id="Header1_MyLinks1_MyHomeLink" href="http://www.cnblogs.com/xinhaijulan/">首页</a> ::
+<a href="http://q.cnblogs.com/" class="menu">博问</a> ::
+<a href="http://home.cnblogs.com/ing/" class="menu">闪存</a> ::
+<a id="Header1_MyLinks1_NewPostLink" rel="nofollow" href="http://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a> ::
+<a id="Header1_MyLinks1_ContactLink" accesskey="9" rel="nofollow" href="http://space.cnblogs.com/msg/send/%e5%bf%83%e6%b5%b7%e5%b7%a8%e6%be%9c">联系</a> ::
+<a id="Header1_MyLinks1_Syndication" href="http://www.cnblogs.com/xinhaijulan/rss">订阅</a>
+<a id="Header1_MyLinks1_XMLLink" class="XMLLink" href="http://www.cnblogs.com/xinhaijulan/rss"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/xml.gif" alt="订阅"></a> ::
+<a id="Header1_MyLinks1_Admin" rel="nofollow" href="http://i.cnblogs.com/">管理</a> ::
+
+</td>
+			<td><img id="Header1_BlueTab" src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/BlueTabRight.gif" align="absmiddle"></td>
+			<td class="HeaderBarTabBack" nowrap="nowrap" width="100%">
+				
+<div class="BlogStatsBar">
+	<table class="BlogStatsBar">
+		<tbody><tr>
+			<td width="100%">
+			</td>
+			<td class="BlogStatsBar" nowrap="nowrap">
+				&nbsp;
+				34 
+				随笔&nbsp;::
+				1 文章
+				::
+				135 评论
+				::
+				3 引用
+			</td>
+		</tr>
+	</tbody></table>
+</div>
+
+			</td>
+		</tr>
+	</tbody></table>
+</div>
+
+</div>
+<div id="leftmenu">	
+
+	    <div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" title="日历" cellpadding="0" cellspacing="0">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar('2015/03/01');return false;">&lt;</a></td><td align="center">2015年4月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar('2015/05/01');return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" abbr="日" scope="col" align="center">日</th><th class="CalDayHeader" abbr="一" scope="col" align="center">一</th><th class="CalDayHeader" abbr="二" scope="col" align="center">二</th><th class="CalDayHeader" abbr="三" scope="col" align="center">三</th><th class="CalDayHeader" abbr="四" scope="col" align="center">四</th><th class="CalDayHeader" abbr="五" scope="col" align="center">五</th><th class="CalDayHeader" abbr="六" scope="col" align="center">六</th></tr><tr><td class="CalOtherMonthDay" align="center">29</td><td class="CalOtherMonthDay" align="center">30</td><td class="CalOtherMonthDay" align="center">31</td><td align="center">1</td><td align="center">2</td><td align="center">3</td><td class="CalWeekendDay" align="center">4</td></tr><tr><td class="CalWeekendDay" align="center">5</td><td align="center">6</td><td align="center">7</td><td align="center">8</td><td align="center">9</td><td align="center">10</td><td class="CalWeekendDay" align="center">11</td></tr><tr><td class="CalWeekendDay" align="center">12</td><td align="center">13</td><td align="center">14</td><td class="CalTodayDay" align="center">15</td><td align="center">16</td><td align="center">17</td><td class="CalWeekendDay" align="center">18</td></tr><tr><td class="CalWeekendDay" align="center">19</td><td align="center">20</td><td align="center">21</td><td align="center">22</td><td align="center">23</td><td align="center">24</td><td class="CalWeekendDay" align="center">25</td></tr><tr><td class="CalWeekendDay" align="center">26</td><td align="center">27</td><td align="center">28</td><td align="center">29</td><td align="center">30</td><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td></tr><tr><td class="CalOtherMonthDay" align="center">3</td><td class="CalOtherMonthDay" align="center">4</td><td class="CalOtherMonthDay" align="center">5</td><td class="CalOtherMonthDay" align="center">6</td><td class="CalOtherMonthDay" align="center">7</td><td class="CalOtherMonthDay" align="center">8</td><td class="CalOtherMonthDay" align="center">9</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+		
+		<div id="blog-sidecolumn">
+<div class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="widget_my_zzk" class="div_my_zzk"><input id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk" type="text">&nbsp;<input onclick="zzk_go()" value="找找看" id="btnZzk" class="btn_my_zzk" type="button"></div>
+<div id="widget_my_google" class="div_my_zzk"><input name="google_q" id="google_q" onkeydown="return google_go_enter(event)" class="input_my_zzk" type="text">&nbsp;<input onclick="google_go()" value="谷歌搜索" class="btn_my_zzk" type="button"></div>
+</div>
+
+
+<h3 class="catListTitle">我的标签</h3>
+<div id="MyTag">
+<ul>
+<li><a href="http://www.cnblogs.com/xinhaijulan/tag/SOA/">SOA</a>(18)</li><li><a href="http://www.cnblogs.com/xinhaijulan/tag/WCF/">WCF</a>(18)</li><li><a href="http://www.cnblogs.com/xinhaijulan/tag/Web%20Service/">Web Service</a>(17)</li><li><a href="http://www.cnblogs.com/xinhaijulan/tag/SilverLIght/">SilverLIght</a>(7)</li><li><a href="http://www.cnblogs.com/xinhaijulan/tag/%E5%A4%9A%E7%BA%BF%E7%A8%8B/">多线程</a>(2)</li><li><a href="http://www.cnblogs.com/xinhaijulan/tag/%E5%91%BD%E5%90%8D%E7%AE%A1%E9%81%93/">命名管道</a>(2)</li><li><a href="http://www.cnblogs.com/xinhaijulan/tag/Named%20Pipe/">Named Pipe</a>(2)</li><li><a href="http://www.cnblogs.com/xinhaijulan/tag/NET.TCP/">NET.TCP</a>(1)</li><li><a href="http://www.cnblogs.com/xinhaijulan/tag/SEO%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E4%BC%98%E5%8C%96/">SEO搜索引擎优化</a>(1)</li><li><a href="http://www.cnblogs.com/xinhaijulan/tag/Session%E5%85%B1%E4%BA%AB/">Session共享</a>(1)</li><li><a href="http://www.cnblogs.com/xinhaijulan/tag/">更多</a></li>
+</ul>
+</div>
+		<h3>随笔分类</h3>
+		
+				<ul>
+			
+				<li><a id="CatList_LinkList_0_Link_0" href="http://www.cnblogs.com/xinhaijulan/category/258502.html">ASP.NET(1)</a> </li>
+			
+				<li><a id="CatList_LinkList_0_Link_1" href="http://www.cnblogs.com/xinhaijulan/category/258642.html">C#(18)</a> </li>
+			
+				<li><a id="CatList_LinkList_0_Link_2" href="http://www.cnblogs.com/xinhaijulan/category/258639.html">MSMQ(1)</a> </li>
+			
+				<li><a id="CatList_LinkList_0_Link_3" href="http://www.cnblogs.com/xinhaijulan/category/255055.html">Named Pipe(2)</a> </li>
+			
+				<li><a id="CatList_LinkList_0_Link_4" href="http://www.cnblogs.com/xinhaijulan/category/259504.html">SEO(1)</a> </li>
+			
+				<li><a id="CatList_LinkList_0_Link_5" href="http://www.cnblogs.com/xinhaijulan/category/258493.html">Session(1)</a> </li>
+			
+				<li><a id="CatList_LinkList_0_Link_6" href="http://www.cnblogs.com/xinhaijulan/category/156664.html">SilverLight(5)</a> </li>
+			
+				<li><a id="CatList_LinkList_0_Link_7" href="http://www.cnblogs.com/xinhaijulan/category/264209.html">SOA(18)</a> </li>
+			
+				<li><a id="CatList_LinkList_0_Link_8" href="http://www.cnblogs.com/xinhaijulan/category/264206.html">WCF(18)</a> </li>
+			
+				<li><a id="CatList_LinkList_0_Link_9" href="http://www.cnblogs.com/xinhaijulan/category/264208.html">Web Services(18)</a> </li>
+			
+				<li><a id="CatList_LinkList_0_Link_10" href="http://www.cnblogs.com/xinhaijulan/category/264207.html">分布式应用程序(18)</a> </li>
+			
+				<li><a id="CatList_LinkList_0_Link_11" href="http://www.cnblogs.com/xinhaijulan/category/258640.html">进程间通信(21)</a> </li>
+			
+				</ul>
+			
+	
+		<h3>随笔档案</h3>
+		
+				<ul>
+			
+				<li><a id="CatList_LinkList_1_Link_0" href="http://www.cnblogs.com/xinhaijulan/archive/2011/09.html">2011年9月 (1)</a> </li>
+			
+				<li><a id="CatList_LinkList_1_Link_1" href="http://www.cnblogs.com/xinhaijulan/archive/2011/01.html">2011年1月 (1)</a> </li>
+			
+				<li><a id="CatList_LinkList_1_Link_2" href="http://www.cnblogs.com/xinhaijulan/archive/2010/12.html">2010年12月 (3)</a> </li>
+			
+				<li><a id="CatList_LinkList_1_Link_3" href="http://www.cnblogs.com/xinhaijulan/archive/2010/11.html">2010年11月 (2)</a> </li>
+			
+				<li><a id="CatList_LinkList_1_Link_4" href="http://www.cnblogs.com/xinhaijulan/archive/2010/10.html">2010年10月 (12)</a> </li>
+			
+				<li><a id="CatList_LinkList_1_Link_5" href="http://www.cnblogs.com/xinhaijulan/archive/2010/08.html">2010年8月 (3)</a> </li>
+			
+				<li><a id="CatList_LinkList_1_Link_6" href="http://www.cnblogs.com/xinhaijulan/archive/2010/07.html">2010年7月 (2)</a> </li>
+			
+				<li><a id="CatList_LinkList_1_Link_7" href="http://www.cnblogs.com/xinhaijulan/archive/2008/10.html">2008年10月 (6)</a> </li>
+			
+				<li><a id="CatList_LinkList_1_Link_8" href="http://www.cnblogs.com/xinhaijulan/archive/2008/09.html">2008年9月 (3)</a> </li>
+			
+				<li><a id="CatList_LinkList_1_Link_9" href="http://www.cnblogs.com/xinhaijulan/archive/2007/01.html">2007年1月 (1)</a> </li>
+			
+				</ul>
+			
+	
+		<h3>文章分类</h3>
+		
+				<ul>
+			
+				<li><a id="CatList_LinkList_2_Link_0" href="http://www.cnblogs.com/xinhaijulan/category/282953.html">生活点滴(1)</a> </li>
+			
+				</ul>
+			
+	
+		<h3>SilverLight</h3>
+		
+				<ul>
+			
+				<li><a id="CatList_LinkList_3_Link_0" href="http://blog.joycode.com/scottgu/" rel="nofollow" target="_blank">scottgu博客中文版</a> </li>
+			
+				</ul>
+			
+	
+<h3>积分与排名</h3>
+<ul>
+	<li>
+		积分 -
+		45224
+	</li><li>
+		排名 -
+		4101
+	</li>
+</ul>
+<div id="recent_comments_wrap">
+<h3 class="catListTitle">最新评论</h3>
+<div class="RecentComment" id="RecentComments">
+	<div id="RecentCommentsBlock"><ul>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/22/1805768.html#3097353">1. Re:消息队列MSMQ的使用实例</a></li>
+    <li class="recent_comment_body">前辈，看了你的例子，很好，感谢分享，不过考虑到一个问题，如果队列使用的过程中被删除了，发送端发送的时候，能监测到发送失败吗？或者由于用户使用什么优化查毒软件把MSMQ开启启动优化掉了，咋整呢？...</li>
+    <li class="recent_comment_author">--仆人</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/21/1805116.html#3053242">2. Re:Session共享的解决方案</a></li>
+    <li class="recent_comment_body">回看了下这篇文章，以下这段： Type stateServerSessionProvider = typeof(HttpSessionState).Assembly.GetType("System.......</li>
+    <li class="recent_comment_author">--Tim Lee</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/21/1805116.html#3046036">3. Re:Session共享的解决方案</a></li>
+    <li class="recent_comment_body">楼主请教，按照第一种方法写了，不知道怎么回事？sessionId 的值不一样。</li>
+    <li class="recent_comment_author">--学之乐</li>
+    <li class="recent_comment_title"><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/10/07/1845141.html#3023708">4. Re:WCF面向服务应用程序系列之四：契约设计(MessageContract)</a></li>
+    <li class="recent_comment_body">我刚初学WCF和C# 前面3篇契约听的云里雾里的。我是这么理解的1.明确契约(ExplicitContract)是为了对外固定个接口和类名字，当服务端修改方法和类的时候、不修改[OperationCo......</li>
+    <li class="recent_comment_author">--kisshexuxia</li>
+</ul>
+</div>
+</div>
+</div><div id="topview_posts_wrap">
+<h3 class="catListTitle">阅读排行榜</h3>
+<div class="RecentComment" id="TopViewPosts"> 
+	<div id="TopViewPostsBlock"><ul><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/21/1805116.html">1. Session共享的解决方案(30198)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/22/1805768.html">2. 消息队列MSMQ的使用实例(9153)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/10/07/1844903.html">3. WCF面向服务应用程序系列之一：Hello WCF(4528)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/07/31/1789147.html">4. 多线程命名管道通信的实现(4200)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/10/31/1865488.html">5. WCF面向服务应用程序系列之十二：托管(Hosting)-基础知识(3682)</a></li></ul></div>
+</div>
+</div><div id="topfeedback_posts_wrap">
+<h3 class="catListTitle">评论排行榜</h3>
+<div class="RecentComment" id="TopCommentsPosts">
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/21/1805116.html">1. Session共享的解决方案(37)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2011/09/02/2163577.html">2. 随机取数据算法性能比较(16)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/10/23/1859213.html">3. WCF面向服务应用程序系列之九：绑定-自定义绑定(CustomBinding)(9)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/10/13/1850598.html">4. WCF面向服务应用程序系列之六：契约版本管理—IExtensibleDataObject(8)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/22/1805768.html">5. 消息队列MSMQ的使用实例(8)</a></li></ul></div>
+</div></div><div id="topdigg_posts_wrap">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div class="RecentComment">
+	<div id="TopDiggPostsBlock"><ul><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/21/1805116.html">1. Session共享的解决方案(8)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2011/09/02/2163577.html">2. 随机取数据算法性能比较(7)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/10/23/1858894.html">3. WCF面向服务应用程序系列之八：绑定-基本知识(7)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2011/01/09/1931272.html">4. WCF面向服务应用程序系列之十八：消息交换模式(MEP)-回调操作(5)</a></li><li><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/12/05/1897282.html">5. WCF面向服务应用程序系列之十五：托管(Hosting)-WAS托管(5)</a></li></ul></div>
+</div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+	
+</div>
+<div id="main">
+	
+
+<div class="post">
+	<div class="postTitle">
+		<a id="cb_post_title_url" href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/22/1805768.html">消息队列MSMQ的使用实例</a>
+	</div>
+	
+	<div class="postText">
+		<div id="cnblogs_post_body"><p>　　消息队列：是在消息传输过程中保存消息的容器。MSMQ是Microsoft的
+消息处理技术，运行平台为Microsoft 
+Windows操作系统。它分为用户队列和系统队列。在用户队列中又分为专用队列：不在整个网络中发布，仅在所驻留的本地计算机上可用。专用队列只能由知
+道队列的完整路径名或标签的用户程序访问。<br>　　关于消息队列的安装，可以通过控制面板-&gt;添加/删除程序-&gt;添加/删除 Windows 组件。</p>
+<p>　　选择“消息队列”并单击“详细信息”。</p>
+<p>　　如果运行的是 Windows Server 2003，请选择“应用程序服务器”来访问消息队列。</p>
+<p>　　确保包括“MSMQ HTTP 支持”在内的所有选项在详细信息页上均处于选定状态。</p>
+<p>　　单击“确定”退出详细信息页，然后单击“下一步”。完成安装。</p>
+<p>　　</p>
+<p>　　这里我们通过实例来说明如何创建队列、发送消息、接收消息。</p>
+<p>创建队列：<br>创建本机队列：@".\private$\队列名称"<br>创建远程队列：@"FormatName:DIRECT=TCP:远程机器IP\private$\队列名称"</p>
+<div onclick="cnblogs_code_show('466664e4-18a9-4c1f-b9a1-7c4ca6b40b6a')" class="cnblogs_code"><img style="display: none;" src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/ContractedBlock.gif" id="code_img_closed_466664e4-18a9-4c1f-b9a1-7c4ca6b40b6a" class="code_img_closed"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/ExpandedBlockStart.gif" onclick="cnblogs_code_hide('466664e4-18a9-4c1f-b9a1-7c4ca6b40b6a',event)" style="" id="code_img_opened_466664e4-18a9-4c1f-b9a1-7c4ca6b40b6a" class="code_img_opened"><span style="display: none;" class="cnblogs_code_collapse">实例化消息队列</span>
+<div style="display: block;" id="cnblogs_code_open_466664e4-18a9-4c1f-b9a1-7c4ca6b40b6a" class="cnblogs_code_hide"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><div><!--<br /><br />Code highlighting produced by Actipro CodeHighlighter (freeware)<br />http://www.CodeHighlighter.com/<br /><br />--><span style="color: #000000;">        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> 实例化消息队列<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;/summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;param name="isLocalComputer"&gt;</span><span style="color: #008000;">是否为本机</span><span style="color: #808080;">&lt;/param&gt;</span><span style="color: #808080;"><br></span><span style="color: #000000;">        </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> MSMQManager(</span><span style="color: #0000ff;">bool</span><span style="color: #000000;"> isLocalComputer)<br>        {<br>            </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> (isLocalComputer)<br>            {<br>                _path </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #800000;">@"</span><span style="color: #800000;">.\private$\</span><span style="color: #800000;">"</span><span style="color: #000000;"> </span><span style="color: #000000;">+</span><span style="color: #000000;"> (ConfigurationManager.AppSettings[</span><span style="color: #800000;">"</span><span style="color: #800000;">MSMQName</span><span style="color: #800000;">"</span><span style="color: #000000;">] </span><span style="color: #000000;">??</span><span style="color: #000000;"> </span><span style="color: #800000;">"</span><span style="color: #800000;">CSMSMQ</span><span style="color: #800000;">"</span><span style="color: #000000;">);<br>            }<br>            </span><span style="color: #0000ff;">else</span><span style="color: #000000;"><br>            {<br>                _path </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #800000;">@"</span><span style="color: #800000;">FormatName:DIRECT=TCP:192.168.1.125\private$\</span><span style="color: #800000;">"</span><span style="color: #000000;"> </span><span style="color: #000000;">+</span><span style="color: #000000;"> (ConfigurationManager.AppSettings[</span><span style="color: #800000;">"</span><span style="color: #800000;">MSMQName</span><span style="color: #800000;">"</span><span style="color: #000000;">] </span><span style="color: #000000;">??</span><span style="color: #000000;"> </span><span style="color: #800000;">"</span><span style="color: #800000;">CSMSMQ</span><span style="color: #800000;">"</span><span style="color: #000000;">);<br>            }<br><br>            _msmq </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">new</span><span style="color: #000000;"> MessageQueue(_path);<br>        }</span></div></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/copycode.gif" alt="复制代码"></a></span></div></div>
+</div>
+<p>&nbsp;&nbsp;</p>
+<div onclick="cnblogs_code_show('3312176e-4ffb-4057-8f06-daf273a83409')" class="cnblogs_code"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/ContractedBlock.gif" id="code_img_closed_3312176e-4ffb-4057-8f06-daf273a83409" class="code_img_closed"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/ExpandedBlockStart.gif" onclick="cnblogs_code_hide('3312176e-4ffb-4057-8f06-daf273a83409',event)" style="display: none;" id="code_img_opened_3312176e-4ffb-4057-8f06-daf273a83409" class="code_img_opened"><span class="cnblogs_code_collapse">创建队列</span>
+<div id="cnblogs_code_open_3312176e-4ffb-4057-8f06-daf273a83409" class="cnblogs_code_hide">
+<pre><div><!--<br /><br />Code highlighting produced by Actipro CodeHighlighter (freeware)<br />http://www.CodeHighlighter.com/<br /><br />--><span style="color: #000000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> 创建队列<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;/summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;param name="transactional"&gt;</span><span style="color: #008000;">是否启用事务</span><span style="color: #808080;">&lt;/param&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;returns&gt;&lt;/returns&gt;</span><span style="color: #808080;"><br></span><span style="color: #000000;">        </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> </span><span style="color: #0000ff;">bool</span><span style="color: #000000;"> Create(</span><span style="color: #0000ff;">bool</span><span style="color: #000000;"> transactional)<br>        {<br>            </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> (MessageQueue.Exists(</span><span style="color: #800000;">@"</span><span style="color: #800000;">.\private$\</span><span style="color: #800000;">"</span><span style="color: #000000;"> </span><span style="color: #000000;">+</span><span style="color: #000000;"> (ConfigurationManager.AppSettings[</span><span style="color: #800000;">"</span><span style="color: #800000;">MSMQName</span><span style="color: #800000;">"</span><span style="color: #000000;">] </span><span style="color: #000000;">??</span><span style="color: #000000;"> </span><span style="color: #800000;">"</span><span style="color: #800000;">CSMSMQ</span><span style="color: #800000;">"</span><span style="color: #000000;">)))<br>            {<br>                </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> </span><span style="color: #0000ff;">true</span><span style="color: #000000;">;<br>            }<br>            </span><span style="color: #0000ff;">else</span><span style="color: #000000;"><br>            {<br>                </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> (MessageQueue.Create(</span><span style="color: #800000;">@"</span><span style="color: #800000;">.\private$\</span><span style="color: #800000;">"</span><span style="color: #000000;"> </span><span style="color: #000000;">+</span><span style="color: #000000;"> (ConfigurationManager.AppSettings[</span><span style="color: #800000;">"</span><span style="color: #800000;">MSMQName</span><span style="color: #800000;">"</span><span style="color: #000000;">] </span><span style="color: #000000;">??</span><span style="color: #000000;"> </span><span style="color: #800000;">"</span><span style="color: #800000;">CSMSMQ</span><span style="color: #800000;">"</span><span style="color: #000000;">), transactional) </span><span style="color: #000000;">!=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">null</span><span style="color: #000000;">)<br>                {<br>                    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> </span><span style="color: #0000ff;">true</span><span style="color: #000000;">;<br>                }<br>                </span><span style="color: #0000ff;">else</span><span style="color: #000000;"><br>                {<br>                    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> </span><span style="color: #0000ff;">false</span><span style="color: #000000;">;<br>                }<br>            }<br>        }</span></div></pre>
+</div>
+</div>
+<p>&nbsp;&nbsp;</p>
+<div onclick="cnblogs_code_show('5ffb9ee3-7f8b-4ca8-a2df-8bd44325b6a1')" class="cnblogs_code"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/ContractedBlock.gif" id="code_img_closed_5ffb9ee3-7f8b-4ca8-a2df-8bd44325b6a1" class="code_img_closed"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/ExpandedBlockStart.gif" onclick="cnblogs_code_hide('5ffb9ee3-7f8b-4ca8-a2df-8bd44325b6a1',event)" style="display: none;" id="code_img_opened_5ffb9ee3-7f8b-4ca8-a2df-8bd44325b6a1" class="code_img_opened"><span class="cnblogs_code_collapse">发送消息队列</span>
+<div id="cnblogs_code_open_5ffb9ee3-7f8b-4ca8-a2df-8bd44325b6a1" class="cnblogs_code_hide">
+<pre><div><!--<br /><br />Code highlighting produced by Actipro CodeHighlighter (freeware)<br />http://www.CodeHighlighter.com/<br /><br />--><span style="color: #000000;">        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> 发送消息队列<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;/summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;param name="msmqIndex"&gt;</span><span style="color: #008000;">消息队列实体</span><span style="color: #808080;">&lt;/param&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;returns&gt;&lt;/returns&gt;</span><span style="color: #808080;"><br></span><span style="color: #000000;">        </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> </span><span style="color: #0000ff;">void</span><span style="color: #000000;"> Send(MSMQIndex msmqIndex)<br>        {<br>            _msmq.Send(</span><span style="color: #0000ff;">new</span><span style="color: #000000;"> Message(msmqIndex, </span><span style="color: #0000ff;">new</span><span style="color: #000000;"> BinaryMessageFormatter()));<br>        }</span></div></pre>
+</div>
+</div>
+<p>&nbsp;&nbsp;</p>
+<div onclick="cnblogs_code_show('d594e813-1186-487a-b1f1-73a5410e95c8')" class="cnblogs_code"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/ContractedBlock.gif" id="code_img_closed_d594e813-1186-487a-b1f1-73a5410e95c8" class="code_img_closed"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/ExpandedBlockStart.gif" onclick="cnblogs_code_hide('d594e813-1186-487a-b1f1-73a5410e95c8',event)" style="display: none;" id="code_img_opened_d594e813-1186-487a-b1f1-73a5410e95c8" class="code_img_opened"><span class="cnblogs_code_collapse">接收消息队列,删除队列</span>
+<div id="cnblogs_code_open_d594e813-1186-487a-b1f1-73a5410e95c8" class="cnblogs_code_hide">
+<pre><div><!--<br /><br />Code highlighting produced by Actipro CodeHighlighter (freeware)<br />http://www.CodeHighlighter.com/<br /><br />--><span style="color: #000000;">        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> 接收消息队列,删除队列<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;/summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;returns&gt;&lt;/returns&gt;</span><span style="color: #808080;"><br></span><span style="color: #000000;">        </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> MSMQIndex ReceiveAndRemove()<br>        {<br>            MSMQIndex msmqIndex </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">null</span><span style="color: #000000;">;<br>            _msmq.Formatter </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">new</span><span style="color: #000000;"> BinaryMessageFormatter();<br>            Message msg </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">null</span><span style="color: #000000;">;<br>            </span><span style="color: #0000ff;">try</span><span style="color: #000000;"><br>            {<br>                msg </span><span style="color: #000000;">=</span><span style="color: #000000;"> _msmq.Receive(</span><span style="color: #0000ff;">new</span><span style="color: #000000;"> TimeSpan(</span><span style="color: #800080;">0</span><span style="color: #000000;">, </span><span style="color: #800080;">0</span><span style="color: #000000;">, </span><span style="color: #800080;">1</span><span style="color: #000000;">));<br>            }<br>            </span><span style="color: #0000ff;">catch</span><span style="color: #000000;">(Exception ex)<br>            {<br>                Console.WriteLine(ex.Message);<br>            }<br>            </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> (msg </span><span style="color: #000000;">!=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">null</span><span style="color: #000000;">)<br>            {<br>                msmqIndex </span><span style="color: #000000;">=</span><span style="color: #000000;"> msg.Body </span><span style="color: #0000ff;">as</span><span style="color: #000000;"> MSMQIndex;<br>            }<br>            </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> msmqIndex;<br>        }</span></div></pre>
+</div>
+</div>
+<p>&nbsp;</p>
+<p>　　以上代码大致说明了消息队列的创建、发送与接收，下面给出消息队列管理器的全部代码。并在附件中给出DEMO，在您安装完成消息队列后，此DEMO可以正常运行，希望对有这方面需求的人有所帮助。</p>
+<p>&nbsp;</p>
+<div onclick="cnblogs_code_show('9529dae9-7712-4a78-9d6f-8dcab4650d08')" class="cnblogs_code"><img style="display: none;" src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/ContractedBlock.gif" id="code_img_closed_9529dae9-7712-4a78-9d6f-8dcab4650d08" class="code_img_closed"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/ExpandedBlockStart.gif" onclick="cnblogs_code_hide('9529dae9-7712-4a78-9d6f-8dcab4650d08',event)" style="" id="code_img_opened_9529dae9-7712-4a78-9d6f-8dcab4650d08" class="code_img_opened"><span style="display: none;" class="cnblogs_code_collapse">消息队列管理器</span>
+<div style="display: block;" id="cnblogs_code_open_9529dae9-7712-4a78-9d6f-8dcab4650d08" class="cnblogs_code_hide"><div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/copycode.gif" alt="复制代码"></a></span></div>
+<pre><div><!--<br /><br />Code highlighting produced by Actipro CodeHighlighter (freeware)<br />http://www.CodeHighlighter.com/<br /><br />--><span style="color: #0000ff;">using</span><span style="color: #000000;"> System;<br></span><span style="color: #0000ff;">using</span><span style="color: #000000;"> System.Collections.Generic;<br></span><span style="color: #0000ff;">using</span><span style="color: #000000;"> System.Text;<br></span><span style="color: #0000ff;">using</span><span style="color: #000000;"> System.Messaging;<br></span><span style="color: #0000ff;">using</span><span style="color: #000000;"> System.Configuration;<br><br></span><span style="color: #0000ff;">namespace</span><span style="color: #000000;"> MSMQTest.Model<br>{    <br>    </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;summary&gt;</span><span style="color: #008000;"><br>    </span><span style="color: #808080;">///</span><span style="color: #008000;"> 消息队列管理器<br>    </span><span style="color: #808080;">///</span><span style="color: #008000;"> 作者：心海巨澜 xinhaijulan@gmail.com<br>    </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;/summary&gt;</span><span style="color: #808080;"><br></span><span style="color: #000000;">    </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> </span><span style="color: #0000ff;">class</span><span style="color: #000000;"> MSMQManager : IDisposable<br>    {<br>        </span><span style="color: #0000ff;">#region</span><span style="color: #000000;"> 字段与属性</span><span style="color: #000000;"><br>        </span><span style="color: #0000ff;">private</span><span style="color: #000000;"> MessageQueue _msmq </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">null</span><span style="color: #000000;">;<br>        </span><span style="color: #0000ff;">private</span><span style="color: #000000;"> </span><span style="color: #0000ff;">string</span><span style="color: #000000;"> _path;<br>     <br>        </span><span style="color: #0000ff;">private</span><span style="color: #000000;"> </span><span style="color: #0000ff;">static</span><span style="color: #000000;"> MSMQManager _instanceLocalComputer </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">new</span><span style="color: #000000;"> MSMQManager(</span><span style="color: #0000ff;">true</span><span style="color: #000000;">);<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> 本机消息队列实例<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;/summary&gt;</span><span style="color: #808080;"><br></span><span style="color: #000000;">        </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> </span><span style="color: #0000ff;">static</span><span style="color: #000000;"> MSMQManager InstanceLocalComputer<br>        {<br>            </span><span style="color: #0000ff;">get</span><span style="color: #000000;"> { </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> MSMQManager._instanceLocalComputer; }<br>        }<br><br>        </span><span style="color: #0000ff;">private</span><span style="color: #000000;"> </span><span style="color: #0000ff;">static</span><span style="color: #000000;"> MSMQManager _instance </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">new</span><span style="color: #000000;"> MSMQManager(</span><span style="color: #0000ff;">false</span><span style="color: #000000;">);<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> 远程消息队列实例<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;/summary&gt;</span><span style="color: #808080;"><br></span><span style="color: #000000;">        </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> </span><span style="color: #0000ff;">static</span><span style="color: #000000;"> MSMQManager Instance<br>        {<br>            </span><span style="color: #0000ff;">get</span><span style="color: #000000;"> { </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> MSMQManager._instance; }<br>        }<br>        </span><span style="color: #0000ff;">#endregion</span><span style="color: #000000;"><br><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> 创建队列<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;/summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;param name="transactional"&gt;</span><span style="color: #008000;">是否启用事务</span><span style="color: #808080;">&lt;/param&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;returns&gt;&lt;/returns&gt;</span><span style="color: #808080;"><br></span><span style="color: #000000;">        </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> </span><span style="color: #0000ff;">bool</span><span style="color: #000000;"> Create(</span><span style="color: #0000ff;">bool</span><span style="color: #000000;"> transactional)<br>        {<br>            </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> (MessageQueue.Exists(</span><span style="color: #800000;">@"</span><span style="color: #800000;">.\private$\</span><span style="color: #800000;">"</span><span style="color: #000000;"> </span><span style="color: #000000;">+</span><span style="color: #000000;"> (ConfigurationManager.AppSettings[</span><span style="color: #800000;">"</span><span style="color: #800000;">MSMQName</span><span style="color: #800000;">"</span><span style="color: #000000;">] </span><span style="color: #000000;">??</span><span style="color: #000000;"> </span><span style="color: #800000;">"</span><span style="color: #800000;">CSMSMQ</span><span style="color: #800000;">"</span><span style="color: #000000;">)))<br>            {<br>                </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> </span><span style="color: #0000ff;">true</span><span style="color: #000000;">;<br>            }<br>            </span><span style="color: #0000ff;">else</span><span style="color: #000000;"><br>            {<br>                </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> (MessageQueue.Create(</span><span style="color: #800000;">@"</span><span style="color: #800000;">.\private$\</span><span style="color: #800000;">"</span><span style="color: #000000;"> </span><span style="color: #000000;">+</span><span style="color: #000000;"> (ConfigurationManager.AppSettings[</span><span style="color: #800000;">"</span><span style="color: #800000;">MSMQName</span><span style="color: #800000;">"</span><span style="color: #000000;">] </span><span style="color: #000000;">??</span><span style="color: #000000;"> </span><span style="color: #800000;">"</span><span style="color: #800000;">CSMSMQ</span><span style="color: #800000;">"</span><span style="color: #000000;">), transactional) </span><span style="color: #000000;">!=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">null</span><span style="color: #000000;">)<br>                {<br>                    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> </span><span style="color: #0000ff;">true</span><span style="color: #000000;">;<br>                }<br>                </span><span style="color: #0000ff;">else</span><span style="color: #000000;"><br>                {<br>                    </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> </span><span style="color: #0000ff;">false</span><span style="color: #000000;">;<br>                }<br>            }<br>        }<br><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> 实例化消息队列<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;/summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;param name="isLocalComputer"&gt;</span><span style="color: #008000;">是否为本机</span><span style="color: #808080;">&lt;/param&gt;</span><span style="color: #808080;"><br></span><span style="color: #000000;">        </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> MSMQManager(</span><span style="color: #0000ff;">bool</span><span style="color: #000000;"> isLocalComputer)<br>        {<br>            </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> (isLocalComputer)<br>            {<br>                _path </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #800000;">@"</span><span style="color: #800000;">.\private$\</span><span style="color: #800000;">"</span><span style="color: #000000;"> </span><span style="color: #000000;">+</span><span style="color: #000000;"> (ConfigurationManager.AppSettings[</span><span style="color: #800000;">"</span><span style="color: #800000;">MSMQName</span><span style="color: #800000;">"</span><span style="color: #000000;">] </span><span style="color: #000000;">??</span><span style="color: #000000;"> </span><span style="color: #800000;">"</span><span style="color: #800000;">CSMSMQ</span><span style="color: #800000;">"</span><span style="color: #000000;">);<br>            }<br>            </span><span style="color: #0000ff;">else</span><span style="color: #000000;"><br>            {<br>                _path </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #800000;">@"</span><span style="color: #800000;">FormatName:DIRECT=TCP:192.168.1.125\private$\</span><span style="color: #800000;">"</span><span style="color: #000000;"> </span><span style="color: #000000;">+</span><span style="color: #000000;"> (ConfigurationManager.AppSettings[</span><span style="color: #800000;">"</span><span style="color: #800000;">MSMQName</span><span style="color: #800000;">"</span><span style="color: #000000;">] </span><span style="color: #000000;">??</span><span style="color: #000000;"> </span><span style="color: #800000;">"</span><span style="color: #800000;">CSMSMQ</span><span style="color: #800000;">"</span><span style="color: #000000;">);<br>            }<br><br>            _msmq </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">new</span><span style="color: #000000;"> MessageQueue(_path);<br>        }<br><br><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> 发送消息队列<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;/summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;param name="msmqIndex"&gt;</span><span style="color: #008000;">消息队列实体</span><span style="color: #808080;">&lt;/param&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;returns&gt;&lt;/returns&gt;</span><span style="color: #808080;"><br></span><span style="color: #000000;">        </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> </span><span style="color: #0000ff;">void</span><span style="color: #000000;"> Send(MSMQIndex msmqIndex)<br>        {<br>            _msmq.Send(</span><span style="color: #0000ff;">new</span><span style="color: #000000;"> Message(msmqIndex, </span><span style="color: #0000ff;">new</span><span style="color: #000000;"> BinaryMessageFormatter()));<br>        }<br><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> 接收消息队列,删除队列<br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;/summary&gt;</span><span style="color: #008000;"><br>        </span><span style="color: #808080;">///</span><span style="color: #008000;"> </span><span style="color: #808080;">&lt;returns&gt;&lt;/returns&gt;</span><span style="color: #808080;"><br></span><span style="color: #000000;">        </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> MSMQIndex ReceiveAndRemove()<br>        {<br>            MSMQIndex msmqIndex </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">null</span><span style="color: #000000;">;<br>            _msmq.Formatter </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">new</span><span style="color: #000000;"> BinaryMessageFormatter();<br>            Message msg </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">null</span><span style="color: #000000;">;<br>            </span><span style="color: #0000ff;">try</span><span style="color: #000000;"><br>            {<br>                msg </span><span style="color: #000000;">=</span><span style="color: #000000;"> _msmq.Receive(</span><span style="color: #0000ff;">new</span><span style="color: #000000;"> TimeSpan(</span><span style="color: #800080;">0</span><span style="color: #000000;">, </span><span style="color: #800080;">0</span><span style="color: #000000;">, </span><span style="color: #800080;">1</span><span style="color: #000000;">));<br>            }<br>            </span><span style="color: #0000ff;">catch</span><span style="color: #000000;">(Exception ex)<br>            {<br>                Console.WriteLine(ex.Message);<br>            }<br>            </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> (msg </span><span style="color: #000000;">!=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">null</span><span style="color: #000000;">)<br>            {<br>                msmqIndex </span><span style="color: #000000;">=</span><span style="color: #000000;"> msg.Body </span><span style="color: #0000ff;">as</span><span style="color: #000000;"> MSMQIndex;<br>            }<br>            </span><span style="color: #0000ff;">return</span><span style="color: #000000;"> msmqIndex;<br>        }<br><br>        </span><span style="color: #0000ff;">#region</span><span style="color: #000000;"> IDisposable Members</span><span style="color: #000000;"><br><br>        </span><span style="color: #0000ff;">public</span><span style="color: #000000;"> </span><span style="color: #0000ff;">void</span><span style="color: #000000;"> Dispose()<br>        {<br>            </span><span style="color: #0000ff;">if</span><span style="color: #000000;"> (_msmq </span><span style="color: #000000;">!=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">null</span><span style="color: #000000;">)<br>            {<br>                _msmq.Close();<br>                _msmq.Dispose();<br>                _msmq </span><span style="color: #000000;">=</span><span style="color: #000000;"> </span><span style="color: #0000ff;">null</span><span style="color: #000000;">;<br>            }<br>        }<br><br>        </span><span style="color: #0000ff;">#endregion</span><span style="color: #000000;"><br>    }<br>}<br></span></div></pre>
+<div class="cnblogs_code_toolbar"><span class="cnblogs_code_copy"><a href="javascript:void(0);" onclick="copyCnblogsCode(this)" title="复制代码"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/copycode.gif" alt="复制代码"></a></span></div></div>
+</div>
+<p>&nbsp;</p>
+<p>　　此DEMO只是消息队列的介绍与使用，还有一些消息队列概念未加说明，比如：</p>
+<p>　　消息队列的创建方式：通过路径、通过格式名、通过标签；</p>
+<p>　　消息队列接收方式：同步与异步；</p>
+<p>　　消息队列序列化：字符、XML、二进制；</p>
+<p>　　以及是否使用事务等。</p>
+<p>&nbsp;</p>
+<p>　　请点击<a href="http://files.cnblogs.com/xinhaijulan/MSMQTest.rar">下载</a>实例。</p>
+<p>&nbsp;</p>
+<div class="cnblogs_code">
+<pre><div><!--<br /><br />Code highlighting produced by Actipro CodeHighlighter (freeware)<br />http://www.CodeHighlighter.com/<br /><br />--><span style="color: #000000;">作者：xinhaijulan<br>出处：<span style="font-family: Courier New; background-color: #f5f5f5;"><a href="http://xinhaijulan.cnblogs.com/">http://xinhaijulan.cnblogs.com</a></span></span><span style="color: #008000;"><br></span><span style="color: #000000;">本文版权归作者和博客园共有，欢迎转载，但未经作者同意必须保留此段声明，且在文章页面明显位置给出原文连接，否则保留追究法律责任的权利。</span></div></pre>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory">分类: <a href="http://www.cnblogs.com/xinhaijulan/category/258639.html">MSMQ</a>, <a href="http://www.cnblogs.com/xinhaijulan/category/258640.html">进程间通信</a>, <a href="http://www.cnblogs.com/xinhaijulan/category/258642.html">C#</a></div>
+<div id="EntryTag">标签: <a href="http://www.cnblogs.com/xinhaijulan/tag/%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">消息队列</a>, <a href="http://www.cnblogs.com/xinhaijulan/tag/MSMQ/">MSMQ</a>, <a href="http://www.cnblogs.com/xinhaijulan/tag/%E8%BF%9B%E7%A8%8B%E9%97%B4%E9%80%9A%E4%BF%A1/">进程间通信</a></div>
+<div id="blog_post_info"><div id="green_channel">
+绿色通道：
+<a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(1805768,cb_blogId,1);green_channel_success(this,'谢谢推荐！');">好文要顶</a>
+<a id="green_channel_follow" onclick="c_follow();" href="javascript:void(0);">关注我</a>
+<a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a><a id="green_channel_contact" href="http://space.cnblogs.com/msg/send/%e5%bf%83%e6%b5%b7%e5%b7%a8%e6%be%9c" target="_blank">与我联系</a>
+<a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/icon_weibo_24.png" alt=""></a>
+</div>
+<div id="author_profile">
+<div id="author_profile_info" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/xinhaijulan/" target="_blank"><img src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/u20697.gif" class="author_avatar" alt=""></a>
+<div id="author_profile_detail" class="author_profile_info">
+<a href="http://home.cnblogs.com/u/xinhaijulan/">心海巨澜</a><br>
+<a href="http://home.cnblogs.com/u/xinhaijulan/followees">关注 - 4</a><br>
+<a href="http://home.cnblogs.com/u/xinhaijulan/followers">粉丝 - 48</a>
+</div>
+</div>
+<div class="clear"></div>
+<div id="author_profile_honor"></div>
+<div id="author_profile_follow">
+    <a href="javascript:void(0);" onclick="c_follow();return false;">+加关注</a>
+</div>
+</div>
+<div id="div_digg">										
+    <div class="diggit" onclick="votePost(1805768,'Digg')">
+        <span class="diggnum" id="digg_count">4</span>
+    </div>
+	<div class="buryit" onclick="votePost(1805768,'Bury')"> 
+		<span class="burynum" id="bury_count">0</span>
+	</div>
+	<div class="clear"></div>	
+	<div class="diggword" id="digg_tips">
+    (请您对文章做出评价)
+    </div>	
+</div>
+</div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/21/1805116.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/21/1805116.html" title="发布于2010-08-21 08:21">Session共享的解决方案</a><br><a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/29/1811827.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/xinhaijulan/archive/2010/08/29/1811827.html" title="发布于2010-08-29 12:29">SEO搜索引擎优化的实施方案</a><br></div>
+</div>
+
+
+	</div>
+	
+	<div class="postfoot">
+		posted on <span id="post-date">2010-08-22 14:39</span> <a href="http://www.cnblogs.com/xinhaijulan/">心海巨澜</a> 阅读(<span id="post_view_count">9153</span>) 评论(<span id="post_comment_count">8</span>)  <a href="http://i.cnblogs.com/EditPosts.aspx?postid=1805768" rel="nofollow">编辑</a> <a href="#" onclick="AddToWz(1805768);return false;">收藏</a>
+	</div>
+</div>
+<script type="text/javascript">var allowComments=true,isLogined=false,cb_blogId=24256,cb_entryId=1805768,cb_blogApp=currentBlogApp,cb_blogUserGuid='f06a3d0b-63cf-dd11-9e4d-001cf0cd104b',cb_entryCreatedDate='2010/8/22 14:39:00';loadViewCount(cb_entryId);</script>
+
+<a name="!comments"></a><div id="blog-comments-placeholder"><div id="comments_pager_top"></div>
+<a name="comments"></a>
+<br>
+<div id="comments">
+<h3>评论</h3>
+
+
+		<div class="post">			
+			<div class="postTitle">
+				<a href="#1899253" class="layer">#1楼</a><a name="1899253" id="comment_anchor_1899253"></a>
+					<span>
+						 <span class="comment_date">2010-08-22 15:50</span>
+					</span>
+				<a id="a_comment_author_1899253" href="http://home.cnblogs.com/u/84123/" target="_blank">toEverybody</a> <a href="http://msg.cnblogs.com/msg/send/toEverybody" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="postText">
+				<div id="comment_body_1899253" class="blog_comment_body">好</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(1899253,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(1899253,'Bury',this)">反对(0)</a></div>
+			</div>
+            <div class="commentOpt">
+			&nbsp;&nbsp;<span class="comment_actions"></span>
+            </div>
+		</div>
+		<br>
+	
+		<div class="post">			
+			<div class="postTitle">
+				<a href="#1899304" class="layer">#2楼</a><a name="1899304" id="comment_anchor_1899304"></a>
+					<span>
+						 <span class="comment_date">2010-08-22 17:57</span>
+					</span>
+				<a id="a_comment_author_1899304" href="http://www.cnblogs.com/shootsoft/" target="_blank">shootsoft.net</a> <a href="http://msg.cnblogs.com/msg/send/shootsoft.net" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="postText">
+				<div id="comment_body_1899304" class="blog_comment_body">MSMQ比较烦的就是得用AD，单机用起来还是挺好用的</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(1899304,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(1899304,'Bury',this)">反对(0)</a></div>
+			</div>
+            <div class="commentOpt">
+			&nbsp;&nbsp;<span class="comment_actions"></span>
+            </div>
+		</div>
+		<br>
+	
+		<div class="post">			
+			<div class="postTitle">
+				<a href="#1915491" class="layer">#3楼</a><a name="1915491" id="comment_anchor_1915491"></a>
+					<span>
+						 <span class="comment_date">2010-09-13 16:33</span>
+					</span>
+				<a id="a_comment_author_1915491" href="http://www.cnblogs.com/dotnets/" target="_blank">赵俊</a> <a href="http://msg.cnblogs.com/msg/send/%e8%b5%b5%e4%bf%8a" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="postText">
+				<div id="comment_body_1915491" class="blog_comment_body">“创建远程队列：@"FormatName:DIRECT=TCP:远程机器IP\private$\队列名称"”<br><br>我是菜鸟，我想问一下这里说的远程队列是不是这个队列放在服务器上面的啊？然后所有的客户机在这个服务器上面读取队列或者把消息发送到这台服务器上面？如果使用的话只要其中的“远程机器IP”改成服务器IP地址就可以了？<br>如回答，深表感谢～。</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(1915491,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(1915491,'Bury',this)">反对(0)</a></div>
+			</div>
+            <div class="commentOpt">
+			&nbsp;&nbsp;<span class="comment_actions"></span>
+            </div>
+		</div>
+		<br>
+	
+		<div class="post">			
+			<div class="postTitle">
+				<a href="#1915601" class="layer">#4楼</a><a name="1915601" id="comment_anchor_1915601"></a>
+					<span>
+						 <span class="comment_date">2010-09-13 18:20</span>
+					</span>
+				<a id="a_comment_author_1915601" href="http://www.cnblogs.com/yuan198094/" target="_blank">TFS</a> <a href="http://msg.cnblogs.com/msg/send/TFS" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="postText">
+				<div id="comment_body_1915601" class="blog_comment_body"><a href="#1915491" title="查看所回复的评论" onclick="commentManager.renderComments(0,50,1915491);">@</a>赵俊<br>创建远程队列：@"FormatName:DIRECT=TCP:远程机器IP\private$\队列名称"”<br><br>这里的：远程机器IP是你要发送消息到达的机器IP地址。这队列是放在你本机上的私有队列中</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(1915601,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(1915601,'Bury',this)">反对(0)</a></div><span id="comment_1915601_avatar" style="display:none;">http://pic.cnitblog.com/face/u46477.jpg?id=20131658</span>
+			</div>
+            <div class="commentOpt">
+			&nbsp;&nbsp;<span class="comment_actions"></span>
+            </div>
+		</div>
+		<br>
+	
+		<div class="post">			
+			<div class="postTitle">
+				<a href="#1916298" class="layer">#5楼</a><a name="1916298" id="comment_anchor_1916298"></a>[<span class="louzhu">楼主</span>]
+					<span>
+						 <span class="comment_date">2010-09-14 14:09</span>
+					</span>
+				<a id="a_comment_author_1916298" href="http://www.cnblogs.com/xinhaijulan/" target="_blank">心海巨澜</a> <a href="http://msg.cnblogs.com/msg/send/%e5%bf%83%e6%b5%b7%e5%b7%a8%e6%be%9c" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="postText">
+				<div id="comment_body_1916298" class="blog_comment_body"><fieldset class="comment_quote"><legend><a href="#1915491" title="查看引用原文">引用</a></legend>赵俊：<br>“创建远程队列：@"FormatName:DIRECT=TCP:远程机器IP\private$\队列名称"”<br><br>我是菜鸟，我想问一下这里说的远程队列是不是这个队列放在服务器上面的啊？然后所有的客户机在这个服务器上面读取队列或者把消息发送到这台服务器上面？如果使用的话只要其中的“远程机器IP”改成服务器IP地址就可以了？<br>如回答，深表感谢～。</fieldset><br>发送与接收消息队列分为2类：<br>1、发送与接收都在本机：则先启动接收端并创建队列【创建本机队列：@".\private$\队列名称"】，发送时不需要创建队列，实例化后即可发送；<br>2、发送端为客户端机器，接收端为服务端机器：则先启动接收端并创建队列【创建本机队列：@".\private$\队列名称"】，发送端发送时需要实例化远程队列【远程队列：@"FormatName:DIRECT=TCP:远程机器IP\private$\队列名称"】后，即可发送。<br>总之：创建队列时是在本机创建的，发送队列时可在本机发送到本机(实例化本机队列)；也可在远程发送到本机（实例化远程队列）。<br></div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(1916298,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(1916298,'Bury',this)">反对(0)</a></div><span id="comment_1916298_avatar" style="display:none;">http://pic.cnitblog.com/face/u20697.gif</span>
+			</div>
+            <div class="commentOpt">
+			&nbsp;&nbsp;<span class="comment_actions"></span>
+            </div>
+		</div>
+		<br>
+	
+		<div class="post">			
+			<div class="postTitle">
+				<a href="#1916417" class="layer">#6楼</a><a name="1916417" id="comment_anchor_1916417"></a>
+					<span>
+						 <span class="comment_date">2010-09-14 16:07</span>
+					</span>
+				<a id="a_comment_author_1916417" href="http://www.cnblogs.com/dotnets/" target="_blank">赵俊</a> <a href="http://msg.cnblogs.com/msg/send/%e8%b5%b5%e4%bf%8a" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="postText">
+				<div id="comment_body_1916417" class="blog_comment_body"><fieldset class="comment_quote"><legend><a href="#1915601" title="查看引用原文">引用</a></legend>Brad Xue：<br>@赵俊<br>创建远程队列：@"FormatName:DIRECT=TCP:远程机器IP\private$\队列名称"”<br><br>这里的：远程机器IP是你要发送消息到达的机器IP地址。这队列是放在你本机上的私有队列中</fieldset><br>那这么说只要是使用到队列的机器都要安装队列服务？那也太不现实了？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(1916417,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(1916417,'Bury',this)">反对(0)</a></div>
+			</div>
+            <div class="commentOpt">
+			&nbsp;&nbsp;<span class="comment_actions"></span>
+            </div>
+		</div>
+		<br>
+	
+		<div class="post">			
+			<div class="postTitle">
+				<a href="#2054930" class="layer">#7楼</a><a name="2054930" id="comment_anchor_2054930"></a>
+					<span>
+						 <span class="comment_date">2011-03-25 17:00</span>
+					</span>
+				<a id="ctl00_CommentList_NameLink_6" target="_blank">zr53722[未注册用户]</a>
+			</div>
+			<div class="postText">
+				<div id="comment_body_2054930" class="blog_comment_body">我消息队列，在局域网内部，发送队列没有问题，接收队列，说我队列错误，，<br>我是带了事物的，没带事物没有问题，你知道是什么问题不？？？</div>
+			</div>
+            <div class="commentOpt">
+			&nbsp;&nbsp;<span class="comment_actions"></span>
+            </div>
+		</div>
+		<br>
+	
+		<div class="post">			
+			<div class="postTitle">
+				<a href="#3097353" class="layer">#8楼</a><a name="3097353" id="comment_anchor_3097353"></a><span id="comment-maxId" style="display:none;">3097353</span><span id="comment-maxDate" style="display:none;">2014/12/31 10:55:57</span>
+					<span>
+						 <span class="comment_date">2014-12-31 10:55</span>
+					</span>
+				<a id="a_comment_author_3097353" href="http://www.cnblogs.com/craigtao/" target="_blank">仆人</a> <a href="http://msg.cnblogs.com/msg/send/%e4%bb%86%e4%ba%ba" title="发送站内短消息" class="sendMsg2This">&nbsp;</a>
+			</div>
+			<div class="postText">
+				<div id="comment_body_3097353" class="blog_comment_body">前辈，看了你的例子，很好，感谢分享，<br><br>不过考虑到一个问题，如果队列使用的过程中被删除了，发送端发送的时候，能监测到发送失败吗？或者由于用户使用什么优化查毒软件把MSMQ开启启动优化掉了，咋整呢？</div><div class="comment_vote"><a href="javascript:void(0);" class="comment_digg" onclick="return voteComment(3097353,'Digg',this)">支持(0)</a><a href="javascript:void(0);" class="comment_bury" onclick="return voteComment(3097353,'Bury',this)">反对(0)</a></div>
+			</div>
+            <div class="commentOpt">
+			&nbsp;&nbsp;<span class="comment_actions"></span>
+            </div>
+		</div>
+		<br>
+	
+</div><div id="comments_pager_bottom"></div></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" id="lnk_RefreshComments" onclick="return RefreshCommentList();">刷新评论</a><a href="#" onclick="return RefreshPage();">刷新页面</a><a href="#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login('commentform');">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="site_nav_under"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】50万行VC++源码: 大型组态工控、电力仿真CAD与GIS源码库</a><br><a href="http://www.rongcloud.cn/promotion" target="_blank">融云，免费为你的App加入IM功能——让你的App“聊”起来！！</a><br></div>
+<div id="opt_under_post"></div>
+<script type="text/javascript">
+    var enableGoogleAd = canShowAdsense(); var googletag = googletag || {}; googletag.cmd = googletag.cmd || [];
+    fixPostBodyFormat();
+</script>
+<div id="ad_under_post_holder">
+<script type="text/javascript">
+    var googletag = googletag || {};
+    googletag.cmd = googletag.cmd || [];
+    (function () {
+        if (enableGoogleAd) {
+            var gads = document.createElement('script');
+            gads.async = true;
+            gads.type = 'text/javascript';
+            var useSSL = 'https:' == document.location.protocol;
+            gads.src = (useSSL ? 'https:' : 'http:') + '//www.googletagservices.com/tag/js/gpt.js';
+            var node = document.getElementsByTagName('script')[0];
+            node.parentNode.insertBefore(gads, node);
+        }
+    })();
+</script>
+<script type="text/javascript">
+    try {
+        if (enableGoogleAd) {
+            googletag.cmd.push(function () {
+                googletag.defineSlot('/1090369/cnblogs_blogpost_C1_sitehome', [300, 250], 'div-gpt-ad-1346480159711-0').addService(googletag.pubads());
+                googletag.defineSlot('/1090369/cnblogs_blogpost_C2', [468, 60], 'div-gpt-ad-1410860226396-0').addService(googletag.pubads());
+                googletag.pubads().enableSingleRequest();
+                googletag.enableServices();
+            });
+        };
+    } catch (e) { }
+</script>
+<div id="google_ad_c1" class="c_ad_block">
+    <div id="div-gpt-ad-1346480159711-0" style="width: 300px; height: 250px;">
+    <script type="text/javascript">
+        try {
+            if (enableGoogleAd) {
+                googletag.cmd.push(function () { googletag.display('div-gpt-ad-1346480159711-0'); });            
+            } else {
+                $('#div-gpt-ad-1346480159711-0').hide();
+            }
+    } catch (e) { }
+    </script>
+    <div style="border: 0pt none;" id="google_ads_iframe_/1090369/cnblogs_blogpost_C1_sitehome_0__container__"><iframe src="javascript:&quot;<html><body style='background:transparent'></body></html>&quot;" style="border: 0px none; vertical-align: bottom;" marginheight="0" marginwidth="0" scrolling="no" name="google_ads_iframe_/1090369/cnblogs_blogpost_C1_sitehome_0" id="google_ads_iframe_/1090369/cnblogs_blogpost_C1_sitehome_0" frameborder="0" height="250" width="300"></iframe></div><iframe src="javascript:&quot;<html><body style='background:transparent'></body></html>&quot;" style="border: 0px none; vertical-align: bottom; visibility: hidden; display: none;" marginheight="0" marginwidth="0" scrolling="no" name="google_ads_iframe_/1090369/cnblogs_blogpost_C1_sitehome_0__hidden__" id="google_ads_iframe_/1090369/cnblogs_blogpost_C1_sitehome_0__hidden__" frameborder="0" height="0" width="0"></iframe></div>
+</div>
+</div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="http://news.cnblogs.com/n/519000/" target="_blank">你的芝麻分涨了还是跌了？ 芝麻信用开始展示用户不良记录</a><br> ·  <a href="http://news.cnblogs.com/n/518999/" target="_blank">腾讯福利升级 今起员工购首套房可无息贷款最高50万元</a><br> ·  <a href="http://news.cnblogs.com/n/518998/" target="_blank">微软小冰变身17岁日本女高中生</a><br> ·  <a href="http://news.cnblogs.com/n/518997/" target="_blank">科学家研究通过气息检测胃癌</a><br> ·  <a href="http://news.cnblogs.com/n/518996/" target="_blank">曝联想控股向港交所提交IPO申请</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="google_ad_c2" class="c_ad_block">
+<div id="div-gpt-ad-1410860226396-0" style="width: 468px; height: 60px;">
+<script type="text/javascript">
+try {
+    if (enableGoogleAd) {
+        googletag.cmd.push(function () { googletag.display('div-gpt-ad-1410860226396-0'); });
+    } else {
+        $('#div-gpt-ad-1346480159711-0').hide();
+    }
+} catch (e) { }
+</script>
+<div style="border: 0pt none;" id="google_ads_iframe_/1090369/cnblogs_blogpost_C2_0__container__"><iframe src="javascript:&quot;<html><body style='background:transparent'></body></html>&quot;" style="border: 0px none; vertical-align: bottom;" marginheight="0" marginwidth="0" scrolling="no" name="google_ads_iframe_/1090369/cnblogs_blogpost_C2_0" id="google_ads_iframe_/1090369/cnblogs_blogpost_C2_0" frameborder="0" height="60" width="468"></iframe></div></div>
+</div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/518888/" target="_blank">微博背后的那些算法</a><br> ·  <a href="http://kb.cnblogs.com/page/518955/" target="_blank">谈“测试驱动的开发”</a><br> ·  <a href="http://kb.cnblogs.com/page/505877/" target="_blank">好团队不可能凭空出现，赢在Leader的可行规划</a><br> ·  <a href="http://kb.cnblogs.com/page/518772/" target="_blank">移动应用测试——打造完美应用的秘诀</a><br> ·  <a href="http://kb.cnblogs.com/page/137715/" target="_blank">什么是对象，为什么要面向对象，怎么才能面向对象？</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+$(function () {
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 200);
+});
+</script><script src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/check_359604.js" type="text/javascript" async=""></script><iframe style="visibility: hidden; display: none;" src="%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97MSMQ%E7%9A%84%E4%BD%BF%E7%94%A8%E5%AE%9E%E4%BE%8B%20-%20%E5%BF%83%E6%B5%B7%E5%B7%A8%E6%BE%9C%20-%20%E5%8D%9A%E5%AE%A2%E5%9B%AD_files/container.htm"></iframe>
+</div>
+
+</div>
+<div class="footer">
+
+<p id="footer">
+	Powered by: 
+	<br>
+	
+	<a id="Footer1_Hyperlink3" name="Hyperlink1" href="http://www.cnblogs.com/" style="font-family:Verdana;font-size:12px;">博客园</a>
+	<br>
+	Copyright © 心海巨澜
+</p>
+</div>
+
+
+<iframe style="display: none; width: 0px; height: 0px;" name="google_osd_static_frame" id="google_osd_static_frame_7061903446804"></iframe></body></html>
